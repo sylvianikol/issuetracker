@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -21,6 +20,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/developers")
+@CrossOrigin(origins = "http://localhost:4200")
 public class DeveloperController {
 
     private final DeveloperService developerService;
@@ -32,7 +32,7 @@ public class DeveloperController {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping("/all")
+    @GetMapping("")
     ResponseEntity<Set<DeveloperViewModel>> getAll() {
 
         Set<DeveloperViewModel> developers = this.developerService.getAll().stream()
@@ -72,12 +72,11 @@ public class DeveloperController {
                 .toUri()).build();
     }
 
-    @PutMapping("/edit/{developerId}")
+    @PutMapping("/{developerId}")
     public ResponseEntity<?> edit(@PathVariable String developerId,
                                   @Valid @RequestBody DeveloperAddBindingModel developerAddBindingModel,
                                   BindingResult bindingResult,
                                   UriComponentsBuilder uriComponentsBuilder) {
-
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity().body(developerAddBindingModel);
         }
@@ -98,7 +97,7 @@ public class DeveloperController {
         this.developerService.delete(developerId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder.path("/developers/all").build().toUri())
+                .location(uriComponentsBuilder.path("/developers").build().toUri())
                 .build();
     }
 }

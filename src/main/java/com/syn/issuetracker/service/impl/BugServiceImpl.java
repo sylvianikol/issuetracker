@@ -1,5 +1,7 @@
 package com.syn.issuetracker.service.impl;
 
+import com.syn.issuetracker.model.binding.BugAddBindingModel;
+import com.syn.issuetracker.model.service.BugServiceModel;
 import com.syn.issuetracker.repository.BugRepository;
 import com.syn.issuetracker.service.BugService;
 import org.modelmapper.ModelMapper;
@@ -16,5 +18,11 @@ public class BugServiceImpl implements BugService {
     public BugServiceImpl(BugRepository bugRepository, ModelMapper modelMapper) {
         this.bugRepository = bugRepository;
         this.modelMapper = modelMapper;
+    }
+
+    @Override
+    public BugServiceModel add(BugAddBindingModel bugAddBindingModel) {
+
+        return null;
     }
 }

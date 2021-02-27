@@ -3,6 +3,9 @@ package com.syn.issuetracker.model.binding;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import static com.syn.issuetracker.common.ValidationErrorMessages.NAME_BLANK;
+import static com.syn.issuetracker.common.ValidationErrorMessages.NAME_LENGTH;
+
 public class DeveloperAddBindingModel {
 
     private String name;
@@ -10,8 +13,8 @@ public class DeveloperAddBindingModel {
     public DeveloperAddBindingModel() {
     }
 
-    @NotBlank(message = "Name should not be empty!")
-    @Size(min = 2, max = 50, message = "Name length should be between 2 and 50 characters.")
+    @NotBlank(message = NAME_BLANK)
+    @Size(min = 2, max = 50, message = NAME_LENGTH)
     public String getName() {
         return name;
     }
