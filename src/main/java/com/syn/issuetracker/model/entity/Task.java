@@ -3,7 +3,7 @@ package com.syn.issuetracker.model.entity;
 import com.syn.issuetracker.enums.Priority;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tasks")
@@ -11,7 +11,7 @@ public class Task extends BaseEntity {
 
     private String title;
     private String description;
-    private LocalDate createdOn;
+    private LocalDateTime createdOn;
     private boolean completed;
     private Priority priority;
     private UserEntity userEntity;
@@ -37,11 +37,11 @@ public class Task extends BaseEntity {
     }
 
     @Column(name = "created_on", nullable = false)
-    public LocalDate getCreatedOn() {
+    public LocalDateTime getCreatedOn() {
         return createdOn;
     }
 
-    public void setCreatedOn(LocalDate createdOn) {
+    public void setCreatedOn(LocalDateTime createdOn) {
         this.createdOn = createdOn;
     }
 

@@ -3,8 +3,6 @@ package com.syn.issuetracker.service.impl;
 import com.syn.issuetracker.enums.Priority;
 import com.syn.issuetracker.exception.CustomEntityNotFoundException;
 import com.syn.issuetracker.exception.DataConflictException;
-import com.syn.issuetracker.exception.UnprocessableEntityException;
-import com.syn.issuetracker.exception.error.ErrorContainer;
 import com.syn.issuetracker.model.binding.TaskAddBindingModel;
 import com.syn.issuetracker.model.binding.TaskEditBindingModel;
 import com.syn.issuetracker.model.entity.Task;
@@ -17,7 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -67,7 +65,7 @@ public class TaskServiceImpl implements TaskService {
         }
 
         Task task = this.modelMapper.map(taskAddBindingModel, Task.class);
-        task.setCreatedOn(LocalDate.now());
+        task.setCreatedOn(LocalDateTime.now());
 
         this.taskRepository.save(task);
 

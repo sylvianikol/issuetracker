@@ -100,7 +100,6 @@ public class UserServiceImpl implements UserService {
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
-                USER_LOGIN_SUCCESS,
                 roles,
                 expirationDate);
     }

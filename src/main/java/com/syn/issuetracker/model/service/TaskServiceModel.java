@@ -6,7 +6,7 @@ import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static com.syn.issuetracker.common.ValidationErrorMessages.*;
 import static com.syn.issuetracker.common.ValidationErrorMessages.DATE_FUTURE;
@@ -15,7 +15,7 @@ public class TaskServiceModel extends BaseServiceModel {
 
     private String title;
     private String description;
-    private LocalDate createdOn;
+    private LocalDateTime createdOn;
     private boolean completed;
     private UserServiceModel developer;
     private String priority;
@@ -44,11 +44,11 @@ public class TaskServiceModel extends BaseServiceModel {
     @NotNull(message = DATE_NULL)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @FutureOrPresent(message = DATE_FUTURE)
-    public LocalDate getCreatedOn() {
+    public LocalDateTime getCreatedOn() {
         return createdOn;
     }
 
-    public void setCreatedOn(LocalDate createdOn) {
+    public void setCreatedOn(LocalDateTime createdOn) {
         this.createdOn = createdOn;
     }
 

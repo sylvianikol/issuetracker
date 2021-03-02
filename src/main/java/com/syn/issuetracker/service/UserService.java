@@ -5,7 +5,6 @@ import com.syn.issuetracker.model.entity.UserEntity;
 import com.syn.issuetracker.model.service.UserServiceModel;
 import com.syn.issuetracker.payload.request.LoginRequest;
 import com.syn.issuetracker.payload.response.JwtResponse;
-import com.syn.issuetracker.payload.response.SignUpResponse;
 
 import java.util.Optional;
 import java.util.Set;

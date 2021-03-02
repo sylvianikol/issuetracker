@@ -1,13 +1,13 @@
 package com.syn.issuetracker.model.view;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class TaskViewModel {
 
     private String id;
     private String title;
     private String description;
-    private LocalDate createdOn;
+    private LocalDateTime createdOn;
     private boolean completed;
     private UserViewModel developer;
     private String priority;
@@ -39,11 +39,11 @@ public class TaskViewModel {
         this.description = description;
     }
 
-    public LocalDate getCreatedOn() {
+    public LocalDateTime getCreatedOn() {
         return createdOn;
     }
 
-    public void setCreatedOn(LocalDate createdOn) {
+    public void setCreatedOn(LocalDateTime createdOn) {
         this.createdOn = createdOn;
     }
 
