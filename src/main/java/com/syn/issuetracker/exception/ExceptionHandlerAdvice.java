@@ -16,7 +16,6 @@ public class ExceptionHandlerAdvice {
     private static final Logger log =
             LoggerFactory.getLogger(ExceptionHandlerAdvice.class);
 
-
     @ExceptionHandler(CustomEntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
@@ -24,9 +23,8 @@ public class ExceptionHandlerAdvice {
         log.error(ex.getMessage());
         return new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
-                ex.getMessage(),
                 request.getDescription(true),
-                ex.getErrorContainer());
+                ex.getMessage());
     }
 
     @ExceptionHandler(UnprocessableEntityException.class)
@@ -36,9 +34,8 @@ public class ExceptionHandlerAdvice {
         log.error(ex.getMessage());
         return new ErrorResponse(
                 HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                ex.getMessage(),
                 request.getDescription(true),
-                ex.getErrorContainer());
+                ex.getMessage());
     }
 
     @ExceptionHandler(DataConflictException.class)
@@ -48,8 +45,7 @@ public class ExceptionHandlerAdvice {
         log.error(ex.getMessage());
         return new ErrorResponse(
                 HttpStatus.CONFLICT.value(),
-                ex.getMessage(),
                 request.getDescription(true),
-                ex.getErrorContainer());
+                ex.getMessage());
     }
 }

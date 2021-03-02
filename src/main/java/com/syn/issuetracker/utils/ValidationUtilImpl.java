@@ -38,8 +38,8 @@ public class ValidationUtilImpl implements ValidationUtil {
             String key = violation.getPropertyPath().toString();
             String value = violation.getMessage();
 
-            errorContainer.getErrors().putIfAbsent(key, new HashSet<>());
-            errorContainer.getErrors().get(key).add(value);
+//            errorContainer.getErrors().putIfAbsent(key, new HashSet<>());
+//            errorContainer.getErrors().get(key).add(value);
         }
 
         return errorContainer;

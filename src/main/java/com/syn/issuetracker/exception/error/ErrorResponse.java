@@ -3,23 +3,13 @@ package com.syn.issuetracker.exception.error;
 public class ErrorResponse {
 
     private int statusCode;
-    private String message;
     private String description;
-    private ErrorContainer errorContainer;
+    private String error;
 
-    public ErrorResponse(int statusCode, String message, String description, ErrorContainer errorContainer) {
+    public ErrorResponse(int statusCode, String description, String error) {
         this.statusCode = statusCode;
-        this.message = message;
         this.description = description;
-        this.errorContainer = errorContainer;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
+        this.error = error;
     }
 
     public int getStatusCode() {
@@ -38,11 +28,11 @@ public class ErrorResponse {
         this.description = description;
     }
 
-    public ErrorContainer getErrorContainer() {
-        return errorContainer;
+    public String getError() {
+        return error;
     }
 
-    public void setErrorContainer(ErrorContainer errorContainer) {
-        this.errorContainer = errorContainer;
+    public void setError(String error) {
+        this.error = error;
     }
 }

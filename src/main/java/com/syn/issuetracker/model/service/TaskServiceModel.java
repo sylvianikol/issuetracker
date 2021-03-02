@@ -9,19 +9,18 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 import static com.syn.issuetracker.common.ValidationErrorMessages.*;
-import static com.syn.issuetracker.common.ValidationErrorMessages.DATE_PAST;
+import static com.syn.issuetracker.common.ValidationErrorMessages.DATE_FUTURE;
 
-public class BugServiceModel extends BaseServiceModel {
+public class TaskServiceModel extends BaseServiceModel {
 
     private String title;
     private String description;
-    private LocalDate creationDate;
-    private String issueType;
-    private String status;
-    private String developerId;
+    private LocalDate createdOn;
+    private boolean completed;
+    private UserServiceModel developer;
     private String priority;
 
-    public BugServiceModel() {
+    public TaskServiceModel() {
     }
 
     @NotBlank(message = TITLE_BLANK)
@@ -44,40 +43,29 @@ public class BugServiceModel extends BaseServiceModel {
 
     @NotNull(message = DATE_NULL)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @FutureOrPresent(message = DATE_PAST)
-    public LocalDate getCreationDate() {
-        return creationDate;
+    @FutureOrPresent(message = DATE_FUTURE)
+    public LocalDate getCreatedOn() {
+        return createdOn;
     }
 
-    public void setCreationDate(LocalDate creationDate) {
-        this.creationDate = creationDate;
+    public void setCreatedOn(LocalDate createdOn) {
+        this.createdOn = createdOn;
     }
 
-    @NotBlank(message = ISSUE_TYPE_BLANK)
-    public String getIssueType() {
-        return issueType;
+    public boolean isCompleted() {
+        return completed;
     }
 
-    public void setIssueType(String issueType) {
-        this.issueType = issueType;
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 
-    @NotBlank(message = STATUS_BLANK)
-    public String getStatus() {
-        return status;
+    public UserServiceModel getDeveloper() {
+        return developer;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    @NotBlank(message = DEVELOPER_ID_BLANK)
-    public String getDeveloperId() {
-        return developerId;
-    }
-
-    public void setDeveloperId(String developerId) {
-        this.developerId = developerId;
+    public void setDeveloper(UserServiceModel developer) {
+        this.developer = developer;
     }
 
     @NotBlank(message = PRIORITY_BLANK)
@@ -88,4 +76,5 @@ public class BugServiceModel extends BaseServiceModel {
     public void setPriority(String priority) {
         this.priority = priority;
     }
+
 }

@@ -1,27 +1,29 @@
 package com.syn.issuetracker.exception.error;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ErrorContainer {
 
-    private Map<String, Set<String>> errors;
+    private List<String> errors;
 
     public ErrorContainer() {
-        this.errors = new HashMap<>();
+        this.errors = new ArrayList<>();
     }
 
-    public ErrorContainer(Map<String, Set<String>> errors) {
+    public ErrorContainer(List<String> errors) {
         this.errors = errors;
     }
 
-    public Map<String, Set<String>> getErrors() {
+    public List<String> getErrors() {
         return errors;
     }
 
-    public void setErrors(Map<String, Set<String>> errors) {
+    public void setErrors(List<String>errors) {
         this.errors = errors;
     }
 
+    public ErrorContainer addError(String error) {
+        this.errors.add(error);
+        return this;
+    }
 }

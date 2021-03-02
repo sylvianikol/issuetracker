@@ -1,14 +1,10 @@
 package com.syn.issuetracker.model.service;
 
-public abstract class BaseServiceModel {
+public class BaseServiceModel {
 
     private String id;
 
     public BaseServiceModel() {
-    }
-
-    public BaseServiceModel(String id) {
-        this.id = id;
     }
 
     public String getId() {
