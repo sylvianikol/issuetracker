@@ -38,16 +38,23 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Set<TaskServiceModel> getAll(String title) {
+    public List<TaskServiceModel> getAll(String title, String userId) {
+        // todo: check if user exists
+
+        // todo: if user is admin
+        //  if title == null -> return findAllByAndOrderByCreatedOnAsc()
+        //  else -> findAllByTitleAndOrderByCreatedOnAsc(title)
 
         if (title == null) {
-            return this.taskRepository.findAll().stream()
+            return this.taskRepository
+                    .findAllByUserIdAndOrderByCreatedOnAsc(userId)
+                    .stream()
                     .map(task -> this.modelMapper.map(task, TaskServiceModel.class))
-                    .collect(Collectors.toUnmodifiableSet());
+                    .collect(Collectors.toUnmodifiableList());
         } else {
-            return this.taskRepository.findByTitleContaining(title).stream()
+            return this.taskRepository.findByUserIdAndTitleContaining(userId, title).stream()
                     .map(task -> this.modelMapper.map(task, TaskServiceModel.class))
-                    .collect(Collectors.toUnmodifiableSet());
+                    .collect(Collectors.toUnmodifiableList());
         }
     }
 

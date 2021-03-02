@@ -11,7 +11,7 @@ public class TaskEditBindingModel {
     private String title;
     private String description;
     private String priority;
-    private String developerId;
+    private String userId;
     private boolean completed;
 
     public TaskEditBindingModel() {
@@ -43,12 +43,12 @@ public class TaskEditBindingModel {
         this.priority = priority;
     }
 
-    public String getDeveloperId() {
-        return developerId;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setDeveloperId(String developerId) {
-        this.developerId = developerId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public boolean isCompleted() {

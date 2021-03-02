@@ -10,9 +10,15 @@ import java.util.Optional;
 @Repository
 public interface TaskRepository extends JpaRepository<Task, String> {
 
+    List<Task> findAllByUserIdAndOrderByCreatedOnAsc(String userId);
+
+    List<Task> findAllByAndOrderByCreatedOnAsc();
+
+    List<Task> findAllByTitleAndOrderByCreatedOnAsc(String title);
+
     Optional<Task> findByTitle(String title);
 
     List<Task> findByCompleted(boolean completed);
 
-    List<Task> findByTitleContaining(String title);
+    List<Task> findByUserIdAndTitleContaining(String userId, String title);
 }

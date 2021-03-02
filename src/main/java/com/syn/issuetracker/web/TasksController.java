@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -36,12 +34,13 @@ public class TasksController {
 
     @CrossOrigin
     @GetMapping("")
-    public ResponseEntity<Set<TaskViewModel>> getAll( @RequestParam(required = false, name = "title") String title) {
+    public ResponseEntity<List<TaskViewModel>> getAll(@RequestParam(required = false, name = "title") String title,
+                                                      @RequestParam(name = "userId") String userId) {
 
-        Set<TaskViewModel> tasks = this.taskService.getAll(title)
+        List<TaskViewModel> tasks = this.taskService.getAll(title, userId)
                 .stream()
                 .map(task -> this.modelMapper.map(task, TaskViewModel.class))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                .collect(Collectors.toCollection(ArrayList::new));
 
         return tasks.isEmpty()
                 ? ResponseEntity.notFound().build()

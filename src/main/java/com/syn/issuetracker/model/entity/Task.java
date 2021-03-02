@@ -14,7 +14,7 @@ public class Task extends BaseEntity {
     private LocalDateTime createdOn;
     private boolean completed;
     private Priority priority;
-    private UserEntity userEntity;
+    private UserEntity user;
 
     public Task() {
     }
@@ -63,11 +63,11 @@ public class Task extends BaseEntity {
     }
 
     @ManyToOne
-    public UserEntity getDeveloper() {
-        return userEntity;
+    public UserEntity getUser() {
+        return user;
     }
 
-    public void setDeveloper(UserEntity userEntity) {
-        this.userEntity = userEntity;
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
 }
