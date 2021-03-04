@@ -13,8 +13,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import java.util.*;
@@ -23,8 +23,6 @@ import java.util.*;
 @RestController
 @RequestMapping("/tasks")
 public class TasksController {
-
-    private final static String[] SORT_TASKS = { "completed", "createdOn"};
 
     private final TaskService taskService;
     private final ModelMapper modelMapper;
@@ -60,7 +58,7 @@ public class TasksController {
 
     @PostMapping("/add")
     public ResponseEntity<?> addConfirm(@Valid @RequestBody TaskAddBindingModel taskAddBindingModel,
-                                 BindingResult bindingResult) {
+                                 BindingResult bindingResult) throws MessagingException, InterruptedException {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity().body(taskAddBindingModel);
         }
@@ -73,8 +71,7 @@ public class TasksController {
     @PostMapping("{taskId}")
     public ResponseEntity<?> edit(@PathVariable String taskId,
                                   @Valid @RequestBody TaskEditBindingModel taskEditBindingModel,
-                                  BindingResult bindingResult,
-                                  UriComponentsBuilder uriComponentsBuilder) {
+                                  BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity().body(taskEditBindingModel);
         }

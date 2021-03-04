@@ -4,6 +4,7 @@ import com.syn.issuetracker.enums.NotificationType;
 import com.syn.issuetracker.enums.Priority;
 import com.syn.issuetracker.exception.CustomEntityNotFoundException;
 import com.syn.issuetracker.exception.DataConflictException;
+import com.syn.issuetracker.model.service.UserServiceModel;
 import com.syn.issuetracker.notification.NotificationExecutorFactory;
 import com.syn.issuetracker.specification.TaskSpecification;
 import com.syn.issuetracker.model.binding.TaskAddBindingModel;
@@ -21,6 +22,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Pageable;
+
+import javax.mail.MessagingException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -76,7 +79,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskServiceModel add(TaskAddBindingModel taskAddBindingModel) {
+    public TaskServiceModel add(TaskAddBindingModel taskAddBindingModel) throws InterruptedException, MessagingException {
 
 //        if (!this.validationUtil.isValid(taskAddBindingModel)) {
 //            throw new UnprocessableEntityException(VALIDATION_FAILED,
@@ -98,7 +101,9 @@ public class TaskServiceImpl implements TaskService {
         task.setCreatedOn(LocalDateTime.now());
         this.taskRepository.save(task);
 
-        NotificationExecutorFactory.getExecutor(NotificationType.EMAIL).sendNotification();
+        NotificationExecutorFactory.getExecutor(NotificationType.EMAIL)
+                .sendNotification(user.getUsername(), user.getEmail(), task.getTitle(),
+                        task.getDescription(), task.getPriority().toString(), task.getId());
 
         return this.modelMapper.map(task, TaskServiceModel.class);
     }
