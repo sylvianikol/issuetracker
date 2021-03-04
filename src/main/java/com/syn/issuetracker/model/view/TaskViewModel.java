@@ -9,7 +9,7 @@ public class TaskViewModel {
     private String description;
     private LocalDateTime createdOn;
     private boolean completed;
-    private UserViewModel user;
+    private UserViewModel developer;
     private String priority;
 
     public TaskViewModel() {
@@ -55,12 +55,12 @@ public class TaskViewModel {
         this.completed = completed;
     }
 
-    public UserViewModel getUser() {
-        return user;
+    public UserViewModel getDeveloper() {
+        return developer;
     }
 
-    public void setUser(UserViewModel user) {
-        this.user = user;
+    public void setDeveloper(UserViewModel developer) {
+        this.developer = developer;
     }
 
     public String getPriority() {

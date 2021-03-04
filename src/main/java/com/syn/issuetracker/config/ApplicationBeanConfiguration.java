@@ -3,6 +3,7 @@ package com.syn.issuetracker.config;
 import com.syn.issuetracker.utils.ValidationUtil;
 import com.syn.issuetracker.utils.ValidationUtilImpl;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

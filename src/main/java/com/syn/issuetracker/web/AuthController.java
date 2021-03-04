@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+@CrossOrigin
 @RestController
 public class AuthController {
 
@@ -19,7 +20,6 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @CrossOrigin
     @PostMapping("/sign-up")
     public ResponseEntity<?> signUp(@Valid @RequestBody SignUpRequest signUpRequest,
                        BindingResult bindingResult) {

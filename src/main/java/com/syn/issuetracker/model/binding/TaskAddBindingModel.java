@@ -10,6 +10,7 @@ public class TaskAddBindingModel {
     private String title;
     private String description;
     private String priority;
+    private String developer;
 
     public TaskAddBindingModel() {
     }
@@ -38,5 +39,13 @@ public class TaskAddBindingModel {
 
     public void setPriority(String priority) {
         this.priority = priority;
+    }
+
+    public String getDeveloper() {
+        return developer;
+    }
+
+    public void setDeveloper(String developer) {
+        this.developer = developer;
     }
 }

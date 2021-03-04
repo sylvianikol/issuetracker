@@ -1,11 +1,15 @@
 package com.syn.issuetracker.service.impl;
 
+import com.syn.issuetracker.enums.NotificationType;
 import com.syn.issuetracker.enums.Priority;
 import com.syn.issuetracker.exception.CustomEntityNotFoundException;
 import com.syn.issuetracker.exception.DataConflictException;
+import com.syn.issuetracker.notification.NotificationExecutorFactory;
+import com.syn.issuetracker.specification.TaskSpecification;
 import com.syn.issuetracker.model.binding.TaskAddBindingModel;
 import com.syn.issuetracker.model.binding.TaskEditBindingModel;
 import com.syn.issuetracker.model.entity.Task;
+import com.syn.issuetracker.model.entity.UserEntity;
 import com.syn.issuetracker.model.service.TaskServiceModel;
 import com.syn.issuetracker.repository.TaskRepository;
 import com.syn.issuetracker.service.UserService;
@@ -13,11 +17,12 @@ import com.syn.issuetracker.service.TaskService;
 import com.syn.issuetracker.utils.ValidationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.syn.issuetracker.common.ExceptionErrorMessages.*;
 
@@ -38,24 +43,36 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskServiceModel> getAll(String title, String userId) {
-        // todo: check if user exists
+    public Map<String, Object> getAll(TaskSpecification taskSpecification, Pageable pageable) {
+        String userId = taskSpecification.getUserId();
+        String title = taskSpecification.getTitle();
 
-        // todo: if user is admin
-        //  if title == null -> return findAllByAndOrderByCreatedOnAsc()
-        //  else -> findAllByTitleAndOrderByCreatedOnAsc(title)
-
-        if (title == null) {
-            return this.taskRepository
-                    .findAllByUserIdAndOrderByCreatedOnAsc(userId)
-                    .stream()
-                    .map(task -> this.modelMapper.map(task, TaskServiceModel.class))
-                    .collect(Collectors.toUnmodifiableList());
-        } else {
-            return this.taskRepository.findByUserIdAndTitleContaining(userId, title).stream()
-                    .map(task -> this.modelMapper.map(task, TaskServiceModel.class))
-                    .collect(Collectors.toUnmodifiableList());
+        if (this.userService.get(userId).isEmpty()) {
+            throw new CustomEntityNotFoundException(USER_NOT_FOUND);
         }
+
+        List<Task> tasks;
+        Page<Task> taskPage;
+
+        if (this.isAdmin(userId)) {
+            if (title == null) {
+                taskPage = this.taskRepository.findAll(pageable);
+            } else {
+                taskPage = this.taskRepository.findAllByTitle(title, pageable);
+            }
+        } else {
+            taskPage = this.taskRepository.findAll(taskSpecification, pageable);
+        }
+
+        tasks = taskPage.getContent();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("tasks", Collections.unmodifiableList(tasks));
+        response.put("currentPage", taskPage.getNumber());
+        response.put("totalItems", taskPage.getTotalElements());
+        response.put("totalPages", taskPage.getTotalPages());
+
+        return response;
     }
 
     @Override
@@ -72,9 +89,16 @@ public class TaskServiceImpl implements TaskService {
         }
 
         Task task = this.modelMapper.map(taskAddBindingModel, Task.class);
-        task.setCreatedOn(LocalDateTime.now());
 
+        UserEntity user = this.userService.get(taskAddBindingModel.getDeveloper())
+                .map(u -> this.modelMapper.map(u, UserEntity.class))
+                .orElseThrow(() -> { throw new CustomEntityNotFoundException(USER_NOT_FOUND); });
+
+        task.setDeveloper(this.modelMapper.map(user, UserEntity.class));
+        task.setCreatedOn(LocalDateTime.now());
         this.taskRepository.save(task);
+
+        NotificationExecutorFactory.getExecutor(NotificationType.EMAIL).sendNotification();
 
         return this.modelMapper.map(task, TaskServiceModel.class);
     }
@@ -124,7 +148,17 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void deleteAll() {
-        this.taskRepository.deleteAll();
+    public void deleteAll(String userId) {
+
+        if (this.isAdmin(userId)) {
+            this.taskRepository.deleteAll();
+        }
+
+        this.taskRepository.deleteAll(this.taskRepository
+                .findAllByDeveloper_IdOrderByCreatedOnDescCompleted(userId));
+    }
+
+    private boolean isAdmin(String userId) {
+        return this.userService.isAdmin(userId);
     }
 }

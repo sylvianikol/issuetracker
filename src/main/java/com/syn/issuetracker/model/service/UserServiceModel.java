@@ -3,12 +3,13 @@ package com.syn.issuetracker.model.service;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 public class UserServiceModel extends BaseServiceModel {
 
     private String username;
     private String email;
-    private String token;
+    private List<UserRoleServiceModel> authorities;
 
     public UserServiceModel() {
     }
@@ -32,11 +33,11 @@ public class UserServiceModel extends BaseServiceModel {
         this.email = email;
     }
 
-    public String getToken() {
-        return token;
+    public List<UserRoleServiceModel> getAuthorities() {
+        return authorities;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setAuthorities(List<UserRoleServiceModel> authorities) {
+        this.authorities = authorities;
     }
 }

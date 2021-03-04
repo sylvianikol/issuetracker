@@ -1,5 +1,6 @@
 package com.syn.issuetracker.web;
 
+import com.syn.issuetracker.specification.TaskSpecification;
 import com.syn.issuetracker.model.binding.TaskAddBindingModel;
 import com.syn.issuetracker.model.binding.TaskEditBindingModel;
 import com.syn.issuetracker.model.service.TaskServiceModel;
@@ -7,21 +8,23 @@ import com.syn.issuetracker.model.view.TaskViewModel;
 import com.syn.issuetracker.service.TaskService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import org.springframework.data.domain.Pageable;
 import java.util.*;
-import java.util.stream.Collectors;
 
+@CrossOrigin("http://localhost:4200")
 @RestController
 @RequestMapping("/tasks")
 public class TasksController {
+
+    private final static String[] SORT_TASKS = { "completed", "createdOn"};
 
     private final TaskService taskService;
     private final ModelMapper modelMapper;
@@ -32,22 +35,19 @@ public class TasksController {
         this.modelMapper = modelMapper;
     }
 
-    @CrossOrigin
     @GetMapping("")
-    public ResponseEntity<List<TaskViewModel>> getAll(@RequestParam(required = false, name = "title") String title,
-                                                      @RequestParam(name = "userId") String userId) {
+    public ResponseEntity<Map<String, Object>> getAll(@RequestParam(required = false, name = "title") String title,
+                                                      @RequestParam(name = "userId") String userId,
+                                                      @PageableDefault(sort = {"completed","createdOn"},
+                                                              direction = Sort.Direction.ASC) Pageable pageable) {
 
-        List<TaskViewModel> tasks = this.taskService.getAll(title, userId)
-                .stream()
-                .map(task -> this.modelMapper.map(task, TaskViewModel.class))
-                .collect(Collectors.toCollection(ArrayList::new));
+        Map<String, Object> tasks = this.taskService.getAll(new TaskSpecification(userId, title), pageable);
 
         return tasks.isEmpty()
                 ? ResponseEntity.notFound().build()
                 : ResponseEntity.ok().body(tasks);
     }
 
-    @CrossOrigin
     @GetMapping("/{taskId}")
     public ResponseEntity<TaskViewModel> get(@PathVariable String taskId) {
 
@@ -58,24 +58,19 @@ public class TasksController {
                 : ResponseEntity.ok(this.modelMapper.map(task.get(), TaskViewModel.class));
     }
 
-    @CrossOrigin
     @PostMapping("/add")
     public ResponseEntity<?> addConfirm(@Valid @RequestBody TaskAddBindingModel taskAddBindingModel,
-                                 BindingResult bindingResult,
-                                 UriComponentsBuilder uriComponentsBuilder) {
+                                 BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity().body(taskAddBindingModel);
         }
 
-        TaskServiceModel task = this.taskService.add(taskAddBindingModel);
+        this.taskService.add(taskAddBindingModel);
 
-        return ResponseEntity.created(uriComponentsBuilder.path("/tasks/{taskId}")
-                .buildAndExpand(task.getId())
-                .toUri()).build();
+        return ResponseEntity.ok().build();
     }
 
-    @CrossOrigin
-    @PutMapping("{taskId}")
+    @PostMapping("{taskId}")
     public ResponseEntity<?> edit(@PathVariable String taskId,
                                   @Valid @RequestBody TaskEditBindingModel taskEditBindingModel,
                                   BindingResult bindingResult,
@@ -84,32 +79,23 @@ public class TasksController {
             return ResponseEntity.unprocessableEntity().body(taskEditBindingModel);
         }
 
-        TaskServiceModel task = this.taskService.edit(taskEditBindingModel, taskId);
+        this.taskService.edit(taskEditBindingModel, taskId);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder.path("api/tasks/{taskId}")
-                        .buildAndExpand(task.getId())
-                        .toUri())
-                .build();
+        return ResponseEntity.ok().build();
     }
 
-    @CrossOrigin
     @DeleteMapping("{taskId}")
-    public ResponseEntity<?> delete(@PathVariable String taskId,
-                                    UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<?> delete(@PathVariable String taskId) {
 
         this.taskService.delete(taskId);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder.path("/tasks").build().toUri())
-                .build();
+        return ResponseEntity.ok().build();
     }
 
-    @CrossOrigin
     @DeleteMapping("")
-    public ResponseEntity<?> deleteAll() {
+    public ResponseEntity<?> deleteAll(@RequestParam(name = "userId") String userId) {
 
-        this.taskService.deleteAll();
+        this.taskService.deleteAll(userId);
 
         return ResponseEntity.ok().build();
     }

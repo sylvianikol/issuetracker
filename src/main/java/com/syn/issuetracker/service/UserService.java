@@ -14,14 +14,16 @@ public interface UserService {
 
     JwtResponse login(LoginRequest loginRequest);
 
-    Optional<UserServiceModel> get(String developerId);
+    Optional<UserServiceModel> get(String userId);
 
     Set<UserServiceModel> getAll();
 
-    UserServiceModel edit(SignUpRequest signUpRequest, String developerId);
+    UserServiceModel edit(SignUpRequest signUpRequest, String userId);
 
-    void delete(String developerId);
+    void delete(String userId);
 
     Optional<UserEntity> findByEmail(String email);
+
+    boolean isAdmin(String userId);
 
 }

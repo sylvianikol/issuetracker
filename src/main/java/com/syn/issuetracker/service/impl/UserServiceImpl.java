@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 import static com.syn.issuetracker.common.ExceptionErrorMessages.*;
-import static com.syn.issuetracker.common.ResponseMessages.USER_LOGIN_SUCCESS;
 import static com.syn.issuetracker.common.SecurityConstants.EXPIRATION_TIME;
 import static com.syn.issuetracker.common.SecurityConstants.SECRET;
 
@@ -151,6 +150,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<UserEntity> findByEmail(String email) {
         return this.userRepository.findByEmail(email);
+    }
+
+    @Override
+    public boolean isAdmin(String userId) {
+        return this.userRepository.getIfAdmin(userId).isPresent();
     }
 
 }

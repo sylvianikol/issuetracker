@@ -17,7 +17,7 @@ public class TaskServiceModel extends BaseServiceModel {
     private String description;
     private LocalDateTime createdOn;
     private boolean completed;
-    private UserServiceModel user;
+    private UserServiceModel developer;
     private String priority;
 
     public TaskServiceModel() {
@@ -60,12 +60,12 @@ public class TaskServiceModel extends BaseServiceModel {
         this.completed = completed;
     }
 
-    public UserServiceModel getUser() {
-        return user;
+    public UserServiceModel getDeveloper() {
+        return developer;
     }
 
-    public void setUser(UserServiceModel user) {
-        this.user = user;
+    public void setDeveloper(UserServiceModel developer) {
+        this.developer = developer;
     }
 
     @NotBlank(message = PRIORITY_BLANK)

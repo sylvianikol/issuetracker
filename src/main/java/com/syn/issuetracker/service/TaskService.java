@@ -1,16 +1,17 @@
 package com.syn.issuetracker.service;
 
+import com.syn.issuetracker.specification.TaskSpecification;
 import com.syn.issuetracker.model.binding.TaskAddBindingModel;
 import com.syn.issuetracker.model.binding.TaskEditBindingModel;
 import com.syn.issuetracker.model.service.TaskServiceModel;
 
-import java.util.List;
+import org.springframework.data.domain.Pageable;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 public interface TaskService {
 
-    List<TaskServiceModel> getAll(String title, String userId);
+    Map<String, Object> getAll(TaskSpecification taskSpecification, Pageable pageable);
 
     TaskServiceModel add(TaskAddBindingModel taskAddBindingModel);
 
@@ -20,5 +21,5 @@ public interface TaskService {
 
     void delete(String taskId);
 
-    void deleteAll();
+    void deleteAll(String userId);
 }

@@ -14,7 +14,7 @@ public class Task extends BaseEntity {
     private LocalDateTime createdOn;
     private boolean completed;
     private Priority priority;
-    private UserEntity user;
+    private UserEntity developer;
 
     public Task() {
     }
@@ -28,6 +28,7 @@ public class Task extends BaseEntity {
         this.title = title;
     }
 
+    @Column(columnDefinition = "TEXT")
     public String getDescription() {
         return description;
     }
@@ -63,11 +64,11 @@ public class Task extends BaseEntity {
     }
 
     @ManyToOne
-    public UserEntity getUser() {
-        return user;
+    public UserEntity getDeveloper() {
+        return this.developer;
     }
 
-    public void setUser(UserEntity user) {
-        this.user = user;
+    public void setDeveloper(UserEntity developer) {
+        this.developer = developer;
     }
 }
