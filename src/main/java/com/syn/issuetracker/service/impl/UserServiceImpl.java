@@ -76,11 +76,6 @@ public class UserServiceImpl implements UserService {
         Page<UserEntity> usersPage = this.userRepository.findAll(userSpecification, pageable);
         List<UserEntity> users = usersPage.getContent();
 
-//        Set<UserServiceModel> users = this.userRepository
-//                .findAll().stream()
-//                .map(d -> this.modelMapper.map(d, UserServiceModel.class))
-//                .collect(Collectors.toCollection(LinkedHashSet::new));
-
         Map<String, Object> response = new HashMap<>();
         response.put("users", Collections.unmodifiableList(users));
         response.put("currentPage", usersPage.getNumber());
@@ -93,12 +88,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserServiceModel edit(SignUpRequest signUpRequest, String developerId) {
 
-        UserEntity userEntity = this.userRepository.findById(developerId)
-                .orElseThrow(() -> { throw new CustomEntityNotFoundException(USER_NOT_FOUND); });
-
         if (!this.validationUtil.isValid(signUpRequest)) {
             throw new UnprocessableEntityException(VALIDATION_FAILED);
         }
+
+        UserEntity userEntity = this.userRepository.findById(developerId)
+                .orElseThrow(() -> { throw new CustomEntityNotFoundException(USER_NOT_FOUND); });
 
         userEntity.setEmail(signUpRequest.getEmail());
         this.userRepository.save(userEntity);

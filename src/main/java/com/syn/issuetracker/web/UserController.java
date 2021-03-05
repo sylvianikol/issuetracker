@@ -44,18 +44,15 @@ public class UserController {
 
         Map<String, Object> users = this.userService
                 .getAll(new UserSpecification(username), pageable);
-//
+
         return users.isEmpty()
                 ? ResponseEntity.notFound().build()
                 : ResponseEntity.ok().body(users);
     }
 
-    // TODO: pre-authorize USER with userId and ADMIN
-//    @PreAuthorize("hasRole('ROLE_ADMIN') or #authUser.id == #userId")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/{userId}")
-    public ResponseEntity<UserViewModel> get(@PathVariable String userId
-//                                             @AuthenticationPrincipal UserDetailsImpl authUser
-    ) {
+    public ResponseEntity<UserViewModel> get(@PathVariable String userId) {
 
         Optional<UserServiceModel> developer =
                 this.userService.get(userId);
@@ -66,26 +63,21 @@ public class UserController {
 
     }
 
-    // TODO: pre-authorize USER with userId and ADMIN
-    @PutMapping("/{userId}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PostMapping("/{userId}")
     public ResponseEntity<?> edit(@PathVariable String userId,
                                   @Valid @RequestBody SignUpRequest signUpRequest,
-                                  BindingResult bindingResult,
-                                  UriComponentsBuilder uriComponentsBuilder) {
+                                  BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity().body(signUpRequest);
         }
 
-        UserServiceModel user = this.userService.edit(signUpRequest, userId);
+        this.userService.edit(signUpRequest, userId);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder.path("/users/{userId}")
-                        .buildAndExpand(user.getId())
-                        .toUri())
-                .build();
+        return ResponseEntity.ok().build();
     }
 
-    // TODO: pre-authorize USER with userId and ADMIN
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> delete(@PathVariable String userId,
                                     UriComponentsBuilder uriComponentsBuilder) {
