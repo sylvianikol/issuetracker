@@ -15,13 +15,7 @@ public interface TaskRepository extends JpaRepository<Task, String>, JpaSpecific
 
     List<Task> findAllByDeveloper_IdOrderByCreatedOnDescCompleted(String userId);
 
-    List<Task> findAllByOrderByCreatedOnDescCompleted();
-
     Page<Task> findAllByTitle(String title, Pageable pageable);
 
     Optional<Task> findByTitle(String title);
-
-    List<Task> findByCompleted(boolean completed);
-
-    List<Task> findByDeveloper_IdAndTitleContainingOrderByCreatedOnDesc(String userId, String title);
 }

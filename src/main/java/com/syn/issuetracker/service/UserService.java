@@ -4,10 +4,11 @@ import com.syn.issuetracker.payload.request.SignUpRequest;
 import com.syn.issuetracker.model.entity.UserEntity;
 import com.syn.issuetracker.model.service.UserServiceModel;
 import com.syn.issuetracker.payload.request.LoginRequest;
-import com.syn.issuetracker.payload.response.JwtResponse;
+import com.syn.issuetracker.specification.UserSpecification;
 
+import org.springframework.data.domain.Pageable;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 public interface UserService {
 
@@ -15,7 +16,7 @@ public interface UserService {
 
     Optional<UserServiceModel> get(String userId);
 
-    Set<UserServiceModel> getAll();
+    Map<String, Object> getAll(UserSpecification userSpecification, Pageable pageable);
 
     UserServiceModel edit(SignUpRequest signUpRequest, String userId);
 

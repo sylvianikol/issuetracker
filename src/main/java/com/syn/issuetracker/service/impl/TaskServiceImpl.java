@@ -1,12 +1,9 @@
 package com.syn.issuetracker.service.impl;
 
-import com.syn.issuetracker.enums.NotificationType;
 import com.syn.issuetracker.enums.Priority;
 import com.syn.issuetracker.exception.CustomEntityNotFoundException;
 import com.syn.issuetracker.exception.DataConflictException;
 import com.syn.issuetracker.exception.UnprocessableEntityException;
-import com.syn.issuetracker.model.service.UserServiceModel;
-import com.syn.issuetracker.notification.NotificationExecutorFactory;
 import com.syn.issuetracker.specification.TaskSpecification;
 import com.syn.issuetracker.model.binding.TaskAddBindingModel;
 import com.syn.issuetracker.model.binding.TaskEditBindingModel;

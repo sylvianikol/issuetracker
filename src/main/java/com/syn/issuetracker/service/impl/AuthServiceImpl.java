@@ -58,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
             throw new UnprocessableEntityException(VALIDATION_FAILED);
         }
 
-        Authentication authentication = authenticationManager.authenticate(
+        Authentication authentication = this.authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);

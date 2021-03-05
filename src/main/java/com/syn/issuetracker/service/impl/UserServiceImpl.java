@@ -11,15 +11,16 @@ import com.syn.issuetracker.payload.request.LoginRequest;
 import com.syn.issuetracker.repository.UserRepository;
 import com.syn.issuetracker.repository.UserRoleRepository;
 import com.syn.issuetracker.service.UserService;
+import com.syn.issuetracker.specification.UserSpecification;
 import com.syn.issuetracker.utils.ValidationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Pageable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.syn.issuetracker.common.ExceptionErrorMessages.*;
 
@@ -70,14 +71,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Set<UserServiceModel> getAll() {
+    public Map<String, Object> getAll(UserSpecification userSpecification, Pageable pageable) {
 
-        Set<UserServiceModel> users = this.userRepository
-                .findAll().stream()
-                .map(d -> this.modelMapper.map(d, UserServiceModel.class))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        Page<UserEntity> usersPage = this.userRepository.findAll(userSpecification, pageable);
+        List<UserEntity> users = usersPage.getContent();
 
-        return Collections.unmodifiableSet(users);
+//        Set<UserServiceModel> users = this.userRepository
+//                .findAll().stream()
+//                .map(d -> this.modelMapper.map(d, UserServiceModel.class))
+//                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("users", Collections.unmodifiableList(users));
+        response.put("currentPage", usersPage.getNumber());
+        response.put("totalItems", usersPage.getTotalElements());
+        response.put("totalPages", usersPage.getTotalPages());
+
+        return response;
     }
 
     @Override

@@ -1,29 +1,26 @@
 package com.syn.issuetracker.web;
 
-import com.syn.issuetracker.model.entity.UserEntity;
 import com.syn.issuetracker.payload.request.SignUpRequest;
 import com.syn.issuetracker.model.service.UserServiceModel;
 import com.syn.issuetracker.model.view.UserViewModel;
-import com.syn.issuetracker.security.UserDetailsImpl;
 import com.syn.issuetracker.service.UserService;
+import com.syn.issuetracker.specification.UserSpecification;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.data.domain.Pageable;
+
 import javax.validation.Valid;
-import java.security.Principal;
-import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @CrossOrigin("http://localhost:4200")
 @RestController
@@ -41,12 +38,13 @@ public class UserController {
 
     @GetMapping("")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<Set<UserViewModel>> getAll() {
+    public ResponseEntity<Map<String, Object>> getAll(@RequestParam(required = false, name = "username") String username,
+                                                     @PageableDefault(sort = {"username"},
+                                                             direction = Sort.Direction.ASC) Pageable pageable) {
 
-        Set<UserViewModel> users = this.userService.getAll().stream()
-                .map(r -> this.modelMapper.map(r, UserViewModel.class))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-
+        Map<String, Object> users = this.userService
+                .getAll(new UserSpecification(username), pageable);
+//
         return users.isEmpty()
                 ? ResponseEntity.notFound().build()
                 : ResponseEntity.ok().body(users);
