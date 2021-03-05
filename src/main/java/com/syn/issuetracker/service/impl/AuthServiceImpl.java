@@ -10,6 +10,7 @@ import com.syn.issuetracker.service.AuthService;
 import com.syn.issuetracker.service.UserService;
 import com.syn.issuetracker.utils.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,7 +34,9 @@ public class AuthServiceImpl implements AuthService {
     private final ValidationUtil validationUtil;
 
     @Autowired
-    public AuthServiceImpl(AuthenticationManager authenticationManager, UserService userService, ValidationUtil validationUtil) {
+    public AuthServiceImpl(AuthenticationManager authenticationManager,
+                           @Lazy UserService userService,
+                           ValidationUtil validationUtil) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.validationUtil = validationUtil;

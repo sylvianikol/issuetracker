@@ -8,7 +8,7 @@ public class TaskViewModel {
     private String title;
     private String description;
     private LocalDateTime createdOn;
-    private boolean completed;
+    private String status;
     private UserViewModel developer;
     private String priority;
 
@@ -47,12 +47,12 @@ public class TaskViewModel {
         this.createdOn = createdOn;
     }
 
-    public boolean isCompleted() {
-        return completed;
+    public String getStatus() {
+        return status;
     }
 
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public UserViewModel getDeveloper() {

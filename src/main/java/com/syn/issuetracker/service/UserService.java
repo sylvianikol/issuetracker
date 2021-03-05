@@ -22,7 +22,7 @@ public interface UserService {
 
     void delete(String userId);
 
-    Optional<UserEntity> findByEmail(String email);
+    Optional<UserEntity> findById(String userId);
 
     boolean isAdmin(String userId);
 

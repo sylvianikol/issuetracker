@@ -24,4 +24,7 @@ public interface TaskService {
     void delete(String taskId);
 
     void deleteAll(String userId);
+
+    void unassignTasks(String id);
+
 }

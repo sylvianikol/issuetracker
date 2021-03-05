@@ -16,7 +16,7 @@ public class TaskServiceModel extends BaseServiceModel {
     private String title;
     private String description;
     private LocalDateTime createdOn;
-    private boolean completed;
+    private String status;
     private UserServiceModel developer;
     private String priority;
 
@@ -52,12 +52,12 @@ public class TaskServiceModel extends BaseServiceModel {
         this.createdOn = createdOn;
     }
 
-    public boolean isCompleted() {
-        return completed;
+    public String getStatus() {
+        return status;
     }
 
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public UserServiceModel getDeveloper() {

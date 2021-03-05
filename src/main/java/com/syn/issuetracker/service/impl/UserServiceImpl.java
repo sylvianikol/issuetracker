@@ -4,12 +4,14 @@ import com.syn.issuetracker.enums.UserRole;
 import com.syn.issuetracker.exception.CustomEntityNotFoundException;
 import com.syn.issuetracker.exception.DataConflictException;
 import com.syn.issuetracker.exception.UnprocessableEntityException;
+import com.syn.issuetracker.model.view.UserViewModel;
 import com.syn.issuetracker.payload.request.SignUpRequest;
 import com.syn.issuetracker.model.entity.UserEntity;
 import com.syn.issuetracker.model.service.UserServiceModel;
 import com.syn.issuetracker.payload.request.LoginRequest;
 import com.syn.issuetracker.repository.UserRepository;
 import com.syn.issuetracker.repository.UserRoleRepository;
+import com.syn.issuetracker.service.TaskService;
 import com.syn.issuetracker.service.UserService;
 import com.syn.issuetracker.specification.UserSpecification;
 import com.syn.issuetracker.utils.ValidationUtil;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Pageable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.syn.issuetracker.common.ExceptionErrorMessages.*;
 
@@ -29,14 +32,16 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
+    private final TaskService taskService;
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
     private final ValidationUtil validationUtil;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserRoleRepository userRoleRepository, PasswordEncoder passwordEncoder, ModelMapper modelMapper, ValidationUtil validationUtil) {
+    public UserServiceImpl(UserRepository userRepository, UserRoleRepository userRoleRepository, TaskService taskService, PasswordEncoder passwordEncoder, ModelMapper modelMapper, ValidationUtil validationUtil) {
         this.userRepository = userRepository;
         this.userRoleRepository = userRoleRepository;
+        this.taskService = taskService;
         this.passwordEncoder = passwordEncoder;
         this.modelMapper = modelMapper;
         this.validationUtil = validationUtil;
@@ -74,7 +79,9 @@ public class UserServiceImpl implements UserService {
     public Map<String, Object> getAll(UserSpecification userSpecification, Pageable pageable) {
 
         Page<UserEntity> usersPage = this.userRepository.findAll(userSpecification, pageable);
-        List<UserEntity> users = usersPage.getContent();
+        List<UserViewModel> users = usersPage.getContent().stream()
+                .map(u -> this.modelMapper.map(u, UserViewModel.class))
+                .collect(Collectors.toList());
 
         Map<String, Object> response = new HashMap<>();
         response.put("users", Collections.unmodifiableList(users));
@@ -102,17 +109,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void delete(String developerId) {
+    public void delete(String userId) {
 
-        UserEntity user = this.userRepository.findById(developerId)
+        UserEntity user = this.userRepository.findById(userId)
                 .orElseThrow(() -> { throw new CustomEntityNotFoundException(USER_NOT_FOUND); });
+
+        this.taskService.unassignTasks(user.getId());
 
         this.userRepository.delete(user);
     }
 
     @Override
-    public Optional<UserEntity> findByEmail(String email) {
-        return this.userRepository.findByUsername(email);
+    public Optional<UserEntity> findById(String userId) {
+        return this.userRepository.findById(userId);
     }
 
     @Override

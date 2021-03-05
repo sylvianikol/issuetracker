@@ -1,6 +1,7 @@
 package com.syn.issuetracker.model.entity;
 
 import com.syn.issuetracker.enums.Priority;
+import com.syn.issuetracker.enums.Status;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,7 +13,7 @@ public class Task extends BaseEntity {
     private String title;
     private String description;
     private LocalDateTime createdOn;
-    private boolean completed;
+    private Status status;
     private Priority priority;
     private UserEntity developer;
 
@@ -46,12 +47,13 @@ public class Task extends BaseEntity {
         this.createdOn = createdOn;
     }
 
-    public boolean isCompleted() {
-        return completed;
+    @Enumerated(EnumType.ORDINAL)
+    public Status getStatus() {
+        return status;
     }
 
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     @Enumerated(value = EnumType.STRING)
@@ -63,7 +65,7 @@ public class Task extends BaseEntity {
         this.priority = priority;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     public UserEntity getDeveloper() {
         return this.developer;
     }

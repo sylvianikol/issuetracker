@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +37,7 @@ public class TasksController {
     @GetMapping("")
     public ResponseEntity<Map<String, Object>> getAll(@RequestParam(required = false, name = "title") String title,
                                                       @RequestParam(name = "userId") String userId,
-                                                      @PageableDefault(sort = {"completed","createdOn"},
+                                                      @PageableDefault(sort = {"status","createdOn"},
                                                               direction = Sort.Direction.ASC) Pageable pageable) {
 
         Map<String, Object> tasks = this.taskService.getAll(new TaskSpecification(userId, title), pageable);

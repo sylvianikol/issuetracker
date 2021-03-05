@@ -1,9 +1,11 @@
 package com.syn.issuetracker.service.impl;
 
 import com.syn.issuetracker.enums.Priority;
+import com.syn.issuetracker.enums.Status;
 import com.syn.issuetracker.exception.CustomEntityNotFoundException;
 import com.syn.issuetracker.exception.DataConflictException;
 import com.syn.issuetracker.exception.UnprocessableEntityException;
+import com.syn.issuetracker.model.service.UserServiceModel;
 import com.syn.issuetracker.specification.TaskSpecification;
 import com.syn.issuetracker.model.binding.TaskAddBindingModel;
 import com.syn.issuetracker.model.binding.TaskEditBindingModel;
@@ -16,6 +18,7 @@ import com.syn.issuetracker.service.TaskService;
 import com.syn.issuetracker.utils.ValidationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +39,10 @@ public class TaskServiceImpl implements TaskService {
     private final ValidationUtil validationUtil;
 
     @Autowired
-    public TaskServiceImpl(TaskRepository taskRepository, UserService userService, ModelMapper modelMapper, ValidationUtil validationUtil) {
+    public TaskServiceImpl(TaskRepository taskRepository,
+                           @Lazy UserService userService,
+                           ModelMapper modelMapper,
+                           ValidationUtil validationUtil) {
         this.taskRepository = taskRepository;
         this.userService = userService;
         this.modelMapper = modelMapper;
@@ -90,12 +96,14 @@ public class TaskServiceImpl implements TaskService {
 
         Task task = this.modelMapper.map(taskAddBindingModel, Task.class);
 
-        UserEntity user = this.userService.get(taskAddBindingModel.getDeveloper())
+        this.userService.get(taskAddBindingModel.getDeveloper())
                 .map(u -> this.modelMapper.map(u, UserEntity.class))
-                .orElseThrow(() -> { throw new CustomEntityNotFoundException(USER_NOT_FOUND); });
+                .ifPresent(user -> task.setDeveloper(
+                        this.modelMapper.map(user, UserEntity.class)));
 
-        task.setDeveloper(this.modelMapper.map(user, UserEntity.class));
         task.setCreatedOn(LocalDateTime.now());
+        task.setStatus(Status.PENDING);
+
         this.taskRepository.save(task);
 
 //        NotificationExecutorFactory.getExecutor(NotificationType.EMAIL)
@@ -129,10 +137,14 @@ public class TaskServiceImpl implements TaskService {
             throw new DataConflictException(TITLE_ALREADY_EXISTS);
         }
 
+        Optional<UserEntity> user = this.userService.findById(taskEditBindingModel.getDeveloperId());
+
+        user.ifPresent(task::setDeveloper);
+
         task.setTitle(taskEditBindingModel.getTitle());
         task.setDescription(taskEditBindingModel.getDescription());
         task.setPriority(Priority.valueOf(taskEditBindingModel.getPriority()));
-        task.setCompleted(taskEditBindingModel.isCompleted());
+        task.setStatus(Status.valueOf(taskEditBindingModel.getStatus()));
 
         this.taskRepository.save(task);
 
@@ -157,8 +169,18 @@ public class TaskServiceImpl implements TaskService {
         }
 
         this.taskRepository.deleteAll(this.taskRepository
-                .findAllByDeveloper_IdOrderByCreatedOnDescCompleted(userId));
+                .getAllByUserId(userId));
     }
+
+    @Override
+    public void unassignTasks(String userId) {
+
+        this.taskRepository.getAllByUserId(userId).forEach(task -> {
+            task.setDeveloper(null);
+            this.taskRepository.save(task);
+        });
+    }
+
 
     private boolean isAdmin(String userId) {
         return this.userService.isAdmin(userId);

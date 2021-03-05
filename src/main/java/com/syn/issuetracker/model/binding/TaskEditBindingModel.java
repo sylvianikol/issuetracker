@@ -12,7 +12,7 @@ public class TaskEditBindingModel {
     private String description;
     private String priority;
     private String developerId;
-    private boolean completed;
+    private String status;
 
     public TaskEditBindingModel() {
     }
@@ -51,11 +51,11 @@ public class TaskEditBindingModel {
         this.developerId = developerId;
     }
 
-    public boolean isCompleted() {
-        return completed;
+    public String getStatus() {
+        return status;
     }
 
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
