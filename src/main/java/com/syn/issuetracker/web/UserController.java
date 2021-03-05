@@ -79,13 +79,10 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping("/{userId}")
-    public ResponseEntity<?> delete(@PathVariable String userId,
-                                    UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<?> delete(@PathVariable String userId) {
 
         this.userService.delete(userId);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .location(uriComponentsBuilder.path("/users").build().toUri())
-                .build();
+        return ResponseEntity.ok().build();
     }
 }
