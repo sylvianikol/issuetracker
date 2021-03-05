@@ -2,5 +2,5 @@ package com.syn.issuetracker.enums;
 
 public enum  UserRole {
 
-    ADMIN, USER,
+    ROLE_ADMIN, ROLE_USER,
 }

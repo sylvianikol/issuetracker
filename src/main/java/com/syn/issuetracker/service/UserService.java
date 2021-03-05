@@ -10,9 +10,8 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface UserService {
-    JwtResponse register(SignUpRequest signUpRequest);
 
-    JwtResponse login(LoginRequest loginRequest);
+    LoginRequest register(SignUpRequest signUpRequest);
 
     Optional<UserServiceModel> get(String userId);
 

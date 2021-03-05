@@ -1,23 +1,31 @@
 package com.syn.issuetracker.web;
 
+import com.syn.issuetracker.model.entity.UserEntity;
 import com.syn.issuetracker.payload.request.SignUpRequest;
 import com.syn.issuetracker.model.service.UserServiceModel;
 import com.syn.issuetracker.model.view.UserViewModel;
+import com.syn.issuetracker.security.UserDetailsImpl;
 import com.syn.issuetracker.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@CrossOrigin("http://localhost:4200")
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -31,25 +39,28 @@ public class UserController {
         this.modelMapper = modelMapper;
     }
 
-    @CrossOrigin
     @GetMapping("")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Set<UserViewModel>> getAll() {
 
-        Set<UserViewModel> developers = this.userService.getAll().stream()
+        Set<UserViewModel> users = this.userService.getAll().stream()
                 .map(r -> this.modelMapper.map(r, UserViewModel.class))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        return developers.isEmpty()
+        return users.isEmpty()
                 ? ResponseEntity.notFound().build()
-                : ResponseEntity.ok().body(developers);
+                : ResponseEntity.ok().body(users);
     }
 
-    @CrossOrigin
-    @GetMapping("/{id}")
-    public ResponseEntity<UserViewModel> get(@PathVariable String id) {
+    // TODO: pre-authorize USER with userId and ADMIN
+//    @PreAuthorize("hasRole('ROLE_ADMIN') or #authUser.id == #userId")
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserViewModel> get(@PathVariable String userId
+//                                             @AuthenticationPrincipal UserDetailsImpl authUser
+    ) {
 
         Optional<UserServiceModel> developer =
-                this.userService.get(id);
+                this.userService.get(userId);
 
         return developer.isEmpty()
                 ? ResponseEntity.notFound().build()
@@ -57,7 +68,7 @@ public class UserController {
 
     }
 
-    @CrossOrigin
+    // TODO: pre-authorize USER with userId and ADMIN
     @PutMapping("/{userId}")
     public ResponseEntity<?> edit(@PathVariable String userId,
                                   @Valid @RequestBody SignUpRequest signUpRequest,
@@ -76,7 +87,7 @@ public class UserController {
                 .build();
     }
 
-    @CrossOrigin
+    // TODO: pre-authorize USER with userId and ADMIN
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> delete(@PathVariable String userId,
                                     UriComponentsBuilder uriComponentsBuilder) {

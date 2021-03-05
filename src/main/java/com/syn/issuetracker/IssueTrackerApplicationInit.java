@@ -32,11 +32,11 @@ public class IssueTrackerApplicationInit implements CommandLineRunner {
 
         if (this.userRoleRepository.count() == 0) {
             UserRoleEntity userRole = new UserRoleEntity();
-            userRole.setRole(UserRole.USER);
+            userRole.setRole(UserRole.ROLE_USER);
             userRole = this.userRoleRepository.save(userRole);
 
             UserRoleEntity adminRole = new UserRoleEntity();
-            adminRole.setRole(UserRole.ADMIN);
+            adminRole.setRole(UserRole.ROLE_ADMIN);
             adminRole = this.userRoleRepository.save(adminRole);
 
             if (this.userRepository.count() == 0) {

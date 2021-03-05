@@ -3,22 +3,20 @@ package com.syn.issuetracker.config;
 import com.syn.issuetracker.security.JWTAuthenticationFilter;
 import com.syn.issuetracker.security.JWTAuthorizationFilter;
 import com.syn.issuetracker.security.UserEntityDetailService;
-import com.syn.issuetracker.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import static com.syn.issuetracker.common.SecurityConstants.*;
 
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -41,13 +39,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
                 .antMatchers(HttpMethod.POST, LOGIN_URL).permitAll()
+//                .antMatchers("/users/{\\d+}").access("hasAnyAuthority('ROLE_TOKENSAVED')")
 //                .antMatchers(HttpMethod.GET, TASKS_URL).authenticated()
 //                .antMatchers(HttpMethod.PUT, TASKS_URL).authenticated()
 //                .antMatchers(HttpMethod.POST, TASK_ADD_URL).authenticated()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager()))
-                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
+                .addFilter(new JWTAuthorizationFilter(authenticationManager(), userEntityDetailService))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
     }
@@ -57,11 +56,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
-//        return source;
-//    }
 }

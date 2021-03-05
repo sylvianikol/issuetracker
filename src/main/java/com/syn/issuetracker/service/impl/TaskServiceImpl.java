@@ -4,6 +4,7 @@ import com.syn.issuetracker.enums.NotificationType;
 import com.syn.issuetracker.enums.Priority;
 import com.syn.issuetracker.exception.CustomEntityNotFoundException;
 import com.syn.issuetracker.exception.DataConflictException;
+import com.syn.issuetracker.exception.UnprocessableEntityException;
 import com.syn.issuetracker.model.service.UserServiceModel;
 import com.syn.issuetracker.notification.NotificationExecutorFactory;
 import com.syn.issuetracker.specification.TaskSpecification;
@@ -81,10 +82,9 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskServiceModel add(TaskAddBindingModel taskAddBindingModel) throws InterruptedException, MessagingException {
 
-//        if (!this.validationUtil.isValid(taskAddBindingModel)) {
-//            throw new UnprocessableEntityException(VALIDATION_FAILED,
-//                    this.validationUtil.getViolations(taskAddBindingModel));
-//        }
+        if (!this.validationUtil.isValid(taskAddBindingModel)) {
+            throw new UnprocessableEntityException(VALIDATION_FAILED);
+        }
 
         String title = taskAddBindingModel.getTitle();
         if (this.taskRepository.findByTitle(title).isPresent()) {
@@ -101,9 +101,9 @@ public class TaskServiceImpl implements TaskService {
         task.setCreatedOn(LocalDateTime.now());
         this.taskRepository.save(task);
 
-        NotificationExecutorFactory.getExecutor(NotificationType.EMAIL)
-                .sendNotification(user.getUsername(), user.getEmail(), task.getTitle(),
-                        task.getDescription(), task.getPriority().toString(), task.getId());
+//        NotificationExecutorFactory.getExecutor(NotificationType.EMAIL)
+//                .sendNotification(user.getUsername(), user.getEmail(), task.getTitle(),
+//                        task.getDescription(), task.getPriority().toString(), task.getId());
 
         return this.modelMapper.map(task, TaskServiceModel.class);
     }

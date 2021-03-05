@@ -3,7 +3,7 @@ package com.syn.issuetracker.web;
 import com.syn.issuetracker.payload.request.SignUpRequest;
 import com.syn.issuetracker.payload.request.LoginRequest;
 import com.syn.issuetracker.payload.response.JwtResponse;
-import com.syn.issuetracker.service.UserService;
+import com.syn.issuetracker.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +14,10 @@ import javax.validation.Valid;
 @RestController
 public class AuthController {
 
-    private final UserService userService;
+    private final AuthService authService;
 
-    public AuthController(UserService userService) {
-        this.userService = userService;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     @PostMapping("/sign-up")
@@ -28,7 +28,7 @@ public class AuthController {
             return ResponseEntity.unprocessableEntity().body(signUpRequest);
         }
 
-        JwtResponse jwtResponse = this.userService.register(signUpRequest);
+        JwtResponse jwtResponse = this.authService.register(signUpRequest);
 
         return ResponseEntity.ok(jwtResponse);
     }
@@ -40,7 +40,7 @@ public class AuthController {
             return ResponseEntity.unprocessableEntity().body(loginRequest);
         }
 
-        JwtResponse jwtResponse = this.userService.login(loginRequest);
+        JwtResponse jwtResponse = this.authService.login(loginRequest);
 
         return ResponseEntity.ok(jwtResponse);
     }
