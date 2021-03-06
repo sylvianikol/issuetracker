@@ -1,6 +1,6 @@
 package com.syn.issuetracker;
 
-import com.syn.issuetracker.enums.UserRole;
+import com.syn.issuetracker.model.enums.UserRole;
 import com.syn.issuetracker.model.entity.UserEntity;
 import com.syn.issuetracker.model.entity.UserRoleEntity;
 import com.syn.issuetracker.repository.UserRepository;
@@ -31,21 +31,22 @@ public class IssueTrackerApplicationInit implements CommandLineRunner {
     public void run(String... args)  {
 
         if (this.userRoleRepository.count() == 0) {
-            UserRoleEntity userRole = new UserRoleEntity();
-            userRole.setRole(UserRole.ROLE_USER);
+            UserRoleEntity userRole = new UserRoleEntity(UserRole.ROLE_USER);
             userRole = this.userRoleRepository.save(userRole);
 
-            UserRoleEntity adminRole = new UserRoleEntity();
-            adminRole.setRole(UserRole.ROLE_ADMIN);
+            UserRoleEntity adminRole = new UserRoleEntity(UserRole.ROLE_ADMIN);
             adminRole = this.userRoleRepository.save(adminRole);
+
+            UserRoleEntity testRole = new UserRoleEntity(UserRole.ROLE_TEST);
+            testRole = this.userRoleRepository.save(testRole);
 
             if (this.userRepository.count() == 0) {
 
-                UserEntity userEntity = new UserEntity();
-                userEntity.setUsername("user");
-                userEntity.setEmail("user@mail.com");
-                userEntity.setPassword(this.passwordEncoder.encode("123"));
-                userEntity.setAuthorities(List.of(userRole));
+                UserEntity user = new UserEntity();
+                user.setUsername("user");
+                user.setEmail("user@mail.com");
+                user.setPassword(this.passwordEncoder.encode("123"));
+                user.setAuthorities(List.of(userRole, testRole));
 
                 UserEntity admin = new UserEntity();
                 admin.setUsername("admin");
@@ -53,7 +54,7 @@ public class IssueTrackerApplicationInit implements CommandLineRunner {
                 admin.setPassword(this.passwordEncoder.encode("123"));
                 admin.setAuthorities(List.of(adminRole, userRole));
 
-                this.userRepository.save(userEntity);
+                this.userRepository.save(user);
                 this.userRepository.save(admin);
             }
         }

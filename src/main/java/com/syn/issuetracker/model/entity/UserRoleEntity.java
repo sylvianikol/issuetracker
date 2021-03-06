@@ -1,6 +1,6 @@
 package com.syn.issuetracker.model.entity;
 
-import com.syn.issuetracker.enums.UserRole;
+import com.syn.issuetracker.model.enums.UserRole;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -16,7 +16,11 @@ public class UserRoleEntity extends BaseEntity {
     public UserRoleEntity() {
     }
 
-    @Enumerated(EnumType.STRING)
+    public UserRoleEntity(UserRole role) {
+        this.role = role;
+    }
+
+    @Enumerated(value = EnumType.STRING)
     public UserRole getRole() {
         return role;
     }

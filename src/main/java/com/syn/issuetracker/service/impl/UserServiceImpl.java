@@ -1,9 +1,11 @@
 package com.syn.issuetracker.service.impl;
 
-import com.syn.issuetracker.enums.UserRole;
+import com.syn.issuetracker.model.enums.UserRole;
 import com.syn.issuetracker.exception.CustomEntityNotFoundException;
 import com.syn.issuetracker.exception.DataConflictException;
 import com.syn.issuetracker.exception.UnprocessableEntityException;
+import com.syn.issuetracker.model.binding.UserEditBindingModel;
+import com.syn.issuetracker.model.entity.UserRoleEntity;
 import com.syn.issuetracker.model.view.UserViewModel;
 import com.syn.issuetracker.payload.request.SignUpRequest;
 import com.syn.issuetracker.model.entity.UserEntity;
@@ -93,16 +95,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserServiceModel edit(SignUpRequest signUpRequest, String developerId) {
+    public UserServiceModel edit(UserEditBindingModel userEditBindingModel, String userId) {
 
-        if (!this.validationUtil.isValid(signUpRequest)) {
+        if (!this.validationUtil.isValid(userEditBindingModel)) {
             throw new UnprocessableEntityException(VALIDATION_FAILED);
         }
 
-        UserEntity userEntity = this.userRepository.findById(developerId)
+        UserEntity userEntity = this.userRepository.findById(userId)
                 .orElseThrow(() -> { throw new CustomEntityNotFoundException(USER_NOT_FOUND); });
 
-        userEntity.setEmail(signUpRequest.getEmail());
+        // todo: check if username already used
+        userEntity.setUsername(userEditBindingModel.getUsername());
+        // todo: check if email already used
+        userEntity.setEmail(userEditBindingModel.getEmail());
+
+        List<UserRoleEntity> newAuthorities = new ArrayList<>();
+        userEditBindingModel.getAuthorities()
+                .forEach(a -> {
+                    UserRole role = a.getRole();
+                    newAuthorities.add(this.userRoleRepository.findByRole(role));
+                });
+
+        if (!newAuthorities.isEmpty()) {
+            userEntity.setAuthorities(newAuthorities);
+        }
+
         this.userRepository.save(userEntity);
 
         return this.modelMapper.map(userEntity, UserServiceModel.class);

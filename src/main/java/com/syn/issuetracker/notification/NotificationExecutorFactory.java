@@ -1,6 +1,6 @@
 package com.syn.issuetracker.notification;
 
-import com.syn.issuetracker.enums.NotificationType;
+import com.syn.issuetracker.model.enums.NotificationType;
 
 public class NotificationExecutorFactory {
 

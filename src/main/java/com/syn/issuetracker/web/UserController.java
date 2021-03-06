@@ -1,5 +1,6 @@
 package com.syn.issuetracker.web;
 
+import com.syn.issuetracker.model.binding.UserEditBindingModel;
 import com.syn.issuetracker.payload.request.SignUpRequest;
 import com.syn.issuetracker.model.service.UserServiceModel;
 import com.syn.issuetracker.model.view.UserViewModel;
@@ -64,13 +65,13 @@ public class UserController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("/{userId}")
     public ResponseEntity<?> edit(@PathVariable String userId,
-                                  @Valid @RequestBody SignUpRequest signUpRequest,
+                                  @Valid @RequestBody UserEditBindingModel userEditBindingModel,
                                   BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.unprocessableEntity().body(signUpRequest);
+            return ResponseEntity.unprocessableEntity().body(userEditBindingModel);
         }
 
-        this.userService.edit(signUpRequest, userId);
+        this.userService.edit(userEditBindingModel, userId);
 
         return ResponseEntity.ok().build();
     }

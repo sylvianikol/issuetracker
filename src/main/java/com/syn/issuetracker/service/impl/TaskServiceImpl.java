@@ -1,7 +1,7 @@
 package com.syn.issuetracker.service.impl;
 
-import com.syn.issuetracker.enums.Priority;
-import com.syn.issuetracker.enums.Status;
+import com.syn.issuetracker.model.enums.Priority;
+import com.syn.issuetracker.model.enums.Status;
 import com.syn.issuetracker.exception.CustomEntityNotFoundException;
 import com.syn.issuetracker.exception.DataConflictException;
 import com.syn.issuetracker.exception.UnprocessableEntityException;

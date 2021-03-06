@@ -1,4 +1,4 @@
-package com.syn.issuetracker.enums;
+package com.syn.issuetracker.model.enums;
 
 public enum Status {
 

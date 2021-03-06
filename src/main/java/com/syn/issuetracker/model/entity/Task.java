@@ -1,7 +1,7 @@
 package com.syn.issuetracker.model.entity;
 
-import com.syn.issuetracker.enums.Priority;
-import com.syn.issuetracker.enums.Status;
+import com.syn.issuetracker.model.enums.Priority;
+import com.syn.issuetracker.model.enums.Status;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

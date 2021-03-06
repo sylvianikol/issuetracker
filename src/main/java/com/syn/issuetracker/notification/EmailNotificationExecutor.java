@@ -1,8 +1,5 @@
 package com.syn.issuetracker.notification;
 
-import com.syn.issuetracker.enums.Priority;
-import com.syn.issuetracker.model.service.TaskServiceModel;
-import com.syn.issuetracker.model.service.UserServiceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
