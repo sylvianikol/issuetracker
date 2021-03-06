@@ -37,7 +37,7 @@ public class TasksController {
     @GetMapping("")
     public ResponseEntity<Map<String, Object>> getAll(@RequestParam(required = false, name = "title") String title,
                                                       @RequestParam(name = "userId") String userId,
-                                                      @PageableDefault(sort = {"status","createdOn"},
+                                                      @PageableDefault(sort = {"status", "priority","createdOn"},
                                                               direction = Sort.Direction.ASC) Pageable pageable) {
 
         Map<String, Object> tasks = this.taskService.getAll(new TaskSpecification(userId, title), pageable);
@@ -58,7 +58,7 @@ public class TasksController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addConfirm(@Valid @RequestBody TaskAddBindingModel taskAddBindingModel,
+    public ResponseEntity<?> add(@Valid @RequestBody TaskAddBindingModel taskAddBindingModel,
                                  BindingResult bindingResult) throws MessagingException, InterruptedException {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity().body(taskAddBindingModel);

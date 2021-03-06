@@ -5,7 +5,6 @@ import com.syn.issuetracker.enums.Status;
 import com.syn.issuetracker.exception.CustomEntityNotFoundException;
 import com.syn.issuetracker.exception.DataConflictException;
 import com.syn.issuetracker.exception.UnprocessableEntityException;
-import com.syn.issuetracker.model.service.UserServiceModel;
 import com.syn.issuetracker.specification.TaskSpecification;
 import com.syn.issuetracker.model.binding.TaskAddBindingModel;
 import com.syn.issuetracker.model.binding.TaskEditBindingModel;
@@ -102,6 +101,7 @@ public class TaskServiceImpl implements TaskService {
                         this.modelMapper.map(user, UserEntity.class)));
 
         task.setCreatedOn(LocalDateTime.now());
+        task.setPriority(Priority.values()[taskAddBindingModel.getPriority()]);
         task.setStatus(Status.PENDING);
 
         this.taskRepository.save(task);
@@ -137,14 +137,14 @@ public class TaskServiceImpl implements TaskService {
             throw new DataConflictException(TITLE_ALREADY_EXISTS);
         }
 
-        Optional<UserEntity> user = this.userService.findById(taskEditBindingModel.getDeveloperId());
+        Optional<UserEntity> user = this.userService.findById(taskEditBindingModel.getDeveloper());
 
         user.ifPresent(task::setDeveloper);
 
         task.setTitle(taskEditBindingModel.getTitle());
         task.setDescription(taskEditBindingModel.getDescription());
-        task.setPriority(Priority.valueOf(taskEditBindingModel.getPriority()));
-        task.setStatus(Status.valueOf(taskEditBindingModel.getStatus()));
+        task.setPriority(Priority.values()[taskEditBindingModel.getPriority()]);
+        task.setStatus(Status.values()[taskEditBindingModel.getStatus()]);
 
         this.taskRepository.save(task);
 

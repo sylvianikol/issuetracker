@@ -47,7 +47,7 @@ public class Task extends BaseEntity {
         this.createdOn = createdOn;
     }
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(value = EnumType.ORDINAL)
     public Status getStatus() {
         return status;
     }
@@ -56,7 +56,7 @@ public class Task extends BaseEntity {
         this.status = status;
     }
 
-    @Enumerated(value = EnumType.STRING)
+    @Enumerated(value = EnumType.ORDINAL)
     public Priority getPriority() {
         return priority;
     }
@@ -65,7 +65,7 @@ public class Task extends BaseEntity {
         this.priority = priority;
     }
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     public UserEntity getDeveloper() {
         return this.developer;
     }

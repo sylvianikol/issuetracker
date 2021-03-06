@@ -10,9 +10,9 @@ public class TaskEditBindingModel {
 
     private String title;
     private String description;
-    private String priority;
-    private String developerId;
-    private String status;
+    private int priority;
+    private String developer;
+    private int status;
 
     public TaskEditBindingModel() {
     }
@@ -35,27 +35,27 @@ public class TaskEditBindingModel {
         this.description = description;
     }
 
-    public String getPriority() {
+    public int getPriority() {
         return priority;
     }
 
-    public void setPriority(String priority) {
+    public void setPriority(int priority) {
         this.priority = priority;
     }
 
-    public String getDeveloperId() {
-        return developerId;
+    public String getDeveloper() {
+        return developer;
     }
 
-    public void setDeveloperId(String developerId) {
-        this.developerId = developerId;
+    public void setDeveloper(String developer) {
+        this.developer = developer;
     }
 
-    public String getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 }
