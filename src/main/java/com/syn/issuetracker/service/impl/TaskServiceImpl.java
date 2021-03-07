@@ -85,12 +85,12 @@ public class TaskServiceImpl implements TaskService {
     public TaskServiceModel add(TaskAddBindingModel taskAddBindingModel) throws InterruptedException, MessagingException {
 
         if (!this.validationUtil.isValid(taskAddBindingModel)) {
-            throw new UnprocessableEntityException(VALIDATION_FAILURE);
+            throw new UnprocessableEntityException(VALIDATION_FAILURE,
+                    this.validationUtil.getViolations(taskAddBindingModel));
         }
 
-        String title = taskAddBindingModel.getTitle();
-        if (this.taskRepository.findByTitle(title).isPresent()) {
-            throw new DataConflictException(TITLE_ALREADY_EXISTS);
+        if (this.taskRepository.findByTitle(taskAddBindingModel.getTitle()).isPresent()) {
+            throw new DataConflictException(DATA_CONFLICT, List.of(TITLE_ALREADY_EXISTS));
         }
 
         Task task = this.modelMapper.map(taskAddBindingModel, Task.class);
@@ -125,15 +125,15 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskServiceModel edit(TaskEditBindingModel taskEditBindingModel, String taskId) {
 
+        if (!this.validationUtil.isValid(taskEditBindingModel)) {
+            throw new UnprocessableEntityException(VALIDATION_FAILURE);
+        }
+
         Task task = this.taskRepository.findById(taskId)
                 .map(t -> this.modelMapper.map(t, Task.class))
-                .orElseThrow(() -> {
-                    throw new CustomEntityNotFoundException(TASK_NOT_FOUND);
-                });
+                .orElseThrow(() -> { throw new CustomEntityNotFoundException(TASK_NOT_FOUND); });
 
-        String title = taskEditBindingModel.getTitle();
-        Optional<Task> taskTitle = this.taskRepository.findByTitle(title);
-        if (taskTitle.isPresent() && !taskTitle.get().getId().equals(taskId)) {
+        if (notUniqueTitle(taskEditBindingModel.getTitle(), taskId)) {
             throw new DataConflictException(TITLE_ALREADY_EXISTS);
         }
 
@@ -181,8 +181,12 @@ public class TaskServiceImpl implements TaskService {
         });
     }
 
-
     private boolean isAdmin(String userId) {
         return this.userService.isAdmin(userId);
+    }
+
+    private boolean notUniqueTitle(String title, String taskId) {
+        Optional<Task> found = this.taskRepository.findByTitle(title);
+        return found.isPresent() && !found.get().getId().equals(taskId);
     }
 }

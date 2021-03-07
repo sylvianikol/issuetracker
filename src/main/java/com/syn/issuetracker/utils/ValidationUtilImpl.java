@@ -1,12 +1,11 @@
 package com.syn.issuetracker.utils;
 
-import com.syn.issuetracker.exception.error.ErrorContainer;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ValidationUtilImpl implements ValidationUtil {
 
@@ -28,20 +27,10 @@ public class ValidationUtilImpl implements ValidationUtil {
         return this.validator.validate(entity);
     }
 
-//    @Override
-//    public <T> ErrorContainer getViolations(T entity) {
-//        Set<ConstraintViolation<T>> violations = this.violations(entity);
-//
-//        ErrorContainer errorContainer = new ErrorContainer();
-//
-//        for (ConstraintViolation<T> violation : violations) {
-//            String key = violation.getPropertyPath().toString();
-//            String value = violation.getMessage();
-//
-//            errorContainer.getErrors().putIfAbsent(key, new HashSet<>());
-//            errorContainer.getErrors().get(key).add(value);
-//        }
-//
-//        return errorContainer;
-//    }
+    @Override
+    public <T> List<String> getViolations(T entity) {
+        return this.validator.validate(entity).stream()
+                .map(ConstraintViolation::getMessageTemplate)
+                .collect(Collectors.toUnmodifiableList());
+    }
 }

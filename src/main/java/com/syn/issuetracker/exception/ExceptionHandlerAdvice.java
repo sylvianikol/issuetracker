@@ -24,7 +24,8 @@ public class ExceptionHandlerAdvice {
         return new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
                 request.getDescription(true),
-                ex.getMessage());
+                ex.getMessage(),
+                ex.getErrors());
     }
 
     @ExceptionHandler(UnprocessableEntityException.class)
@@ -32,10 +33,12 @@ public class ExceptionHandlerAdvice {
     @ResponseBody
     public ErrorResponse handleUnprocessableEntityException(UnprocessableEntityException ex, WebRequest request) {
         log.error(ex.getMessage());
+
         return new ErrorResponse(
                 HttpStatus.UNPROCESSABLE_ENTITY.value(),
                 request.getDescription(true),
-                ex.getMessage());
+                ex.getMessage(),
+                ex.getErrors());
     }
 
     @ExceptionHandler(DataConflictException.class)
@@ -46,6 +49,7 @@ public class ExceptionHandlerAdvice {
         return new ErrorResponse(
                 HttpStatus.CONFLICT.value(),
                 request.getDescription(true),
-                ex.getMessage());
+                ex.getMessage(),
+                ex.getErrors());
     }
 }

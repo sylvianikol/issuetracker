@@ -24,6 +24,11 @@ public class ErrorResponse {
         this.error = error;
     }
 
+    public ErrorResponse(int statusCode, String description, String message, List<String> error) {
+        this(statusCode, description, message);
+        this.error = error;
+    }
+
     public int getStatusCode() {
         return statusCode;
     }
