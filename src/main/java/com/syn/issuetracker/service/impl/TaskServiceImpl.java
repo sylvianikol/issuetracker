@@ -126,15 +126,16 @@ public class TaskServiceImpl implements TaskService {
     public TaskServiceModel edit(TaskEditBindingModel taskEditBindingModel, String taskId) {
 
         if (!this.validationUtil.isValid(taskEditBindingModel)) {
-            throw new UnprocessableEntityException(VALIDATION_FAILURE);
+            throw new UnprocessableEntityException(VALIDATION_FAILURE,
+                    this.validationUtil.getViolations(taskEditBindingModel));
         }
 
         Task task = this.taskRepository.findById(taskId)
                 .map(t -> this.modelMapper.map(t, Task.class))
-                .orElseThrow(() -> { throw new CustomEntityNotFoundException(TASK_NOT_FOUND); });
+                .orElseThrow(() -> { throw new CustomEntityNotFoundException(NOT_FOUND, List.of(TASK_NOT_FOUND)); });
 
         if (notUniqueTitle(taskEditBindingModel.getTitle(), taskId)) {
-            throw new DataConflictException(TITLE_ALREADY_EXISTS);
+            throw new DataConflictException(DATA_CONFLICT, List.of(TITLE_ALREADY_EXISTS));
         }
 
         Optional<UserEntity> user = this.userService.findById(taskEditBindingModel.getDeveloper());
