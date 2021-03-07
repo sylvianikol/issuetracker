@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
+import static com.syn.issuetracker.common.ExceptionErrorMessages.AUTH_INVALID;
 import static com.syn.issuetracker.common.ExceptionErrorMessages.VALIDATION_FAILURE;
 import static com.syn.issuetracker.common.SecurityConstants.EXPIRATION_TIME;
 import static com.syn.issuetracker.common.SecurityConstants.SECRET;
@@ -58,9 +59,17 @@ public class AuthServiceImpl implements AuthService {
             throw new UnprocessableEntityException(VALIDATION_FAILURE, this.validationUtil.getViolations(loginRequest));
         }
 
-        Authentication authentication = this.authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        Authentication authentication = null;
+        try {
+            authentication = this.authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
 
+        if (authentication == null) {
+            throw new UnprocessableEntityException(VALIDATION_FAILURE, List.of(AUTH_INVALID));
+        }
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 

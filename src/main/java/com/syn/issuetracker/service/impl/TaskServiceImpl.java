@@ -54,7 +54,7 @@ public class TaskServiceImpl implements TaskService {
         String title = taskSpecification.getTitle();
 
         if (this.userService.get(userId).isEmpty()) {
-            throw new CustomEntityNotFoundException(USER_NOT_FOUND);
+            throw new CustomEntityNotFoundException(NOT_FOUND, List.of(USER_NOT_FOUND));
         }
 
         List<Task> tasks;

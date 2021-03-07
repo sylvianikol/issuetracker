@@ -46,11 +46,11 @@ public class TasksController {
                                                       @PageableDefault(sort = {"status", "priority","createdOn"},
                                                               direction = Sort.Direction.ASC) Pageable pageable) {
 
-        Map<String, Object> tasks = this.taskService.getAll(new TaskSpecification(userId, title), pageable);
+        Map<String, Object> response = this.taskService.getAll(new TaskSpecification(userId, title), pageable);
 
-        return tasks.isEmpty()
+        return (long) response.get("totalItems") == 0L
                 ? ResponseEntity.notFound().build()
-                : ResponseEntity.ok().body(tasks);
+                : ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/{taskId}")

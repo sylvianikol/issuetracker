@@ -47,6 +47,7 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<?> signIn(@Valid @RequestBody LoginRequest loginRequest,
                                     BindingResult bindingResult) {
+
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
                     .body(new ErrorResponse(422, VALIDATION_FAILURE,
