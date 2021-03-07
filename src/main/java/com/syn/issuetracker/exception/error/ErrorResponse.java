@@ -1,14 +1,26 @@
 package com.syn.issuetracker.exception.error;
 
+import java.util.List;
+
 public class ErrorResponse {
 
     private int statusCode;
     private String description;
-    private String error;
+    private String message;
+    private List<String> error;
 
-    public ErrorResponse(int statusCode, String description, String error) {
+    public ErrorResponse(int statusCode, String description) {
         this.statusCode = statusCode;
         this.description = description;
+    }
+
+    public ErrorResponse(int statusCode, String description, String message) {
+        this(statusCode, description);
+        this.message = message;
+    }
+
+    public ErrorResponse(int statusCode, String description, List<String> error) {
+        this(statusCode, description);
         this.error = error;
     }
 
@@ -28,11 +40,19 @@ public class ErrorResponse {
         this.description = description;
     }
 
-    public String getError() {
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public List<String> getError() {
         return error;
     }
 
-    public void setError(String error) {
+    public void setError(List<String> error) {
         this.error = error;
     }
 }

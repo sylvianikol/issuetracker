@@ -1,23 +1,32 @@
 package com.syn.issuetracker.web;
 
-import com.syn.issuetracker.payload.request.SignUpRequest;
-import com.syn.issuetracker.payload.request.LoginRequest;
-import com.syn.issuetracker.payload.response.JwtResponse;
+import com.syn.issuetracker.exception.error.ErrorResponse;
+import com.syn.issuetracker.model.payload.request.SignUpRequest;
+import com.syn.issuetracker.model.payload.request.LoginRequest;
+import com.syn.issuetracker.model.payload.response.JwtResponse;
 import com.syn.issuetracker.service.AuthService;
+import com.syn.issuetracker.utils.BindingResultErrorExtractor;
+import com.syn.issuetracker.utils.ErrorExtractorUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import static com.syn.issuetracker.common.ExceptionErrorMessages.VALIDATION_FAILURE;
+
 @CrossOrigin
 @RestController
 public class AuthController {
 
     private final AuthService authService;
+    private ErrorExtractorUtil<BindingResult, String> errorExtractorUtil;
 
+    @Autowired
     public AuthController(AuthService authService) {
         this.authService = authService;
+        this.errorExtractorUtil = new BindingResultErrorExtractor();
     }
 
     @PostMapping("/sign-up")
@@ -25,7 +34,9 @@ public class AuthController {
                        BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.unprocessableEntity().body(signUpRequest);
+            return ResponseEntity.unprocessableEntity()
+                    .body(new ErrorResponse(422, VALIDATION_FAILURE,
+                            this.errorExtractorUtil.extract(bindingResult)));
         }
 
         JwtResponse jwtResponse = this.authService.register(signUpRequest);
@@ -37,7 +48,9 @@ public class AuthController {
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest,
                                               BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.unprocessableEntity().body(loginRequest);
+            return ResponseEntity.unprocessableEntity()
+                    .body(new ErrorResponse(422, VALIDATION_FAILURE,
+                            this.errorExtractorUtil.extract(bindingResult)));
         }
 
         JwtResponse jwtResponse = this.authService.login(loginRequest);

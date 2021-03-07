@@ -85,7 +85,7 @@ public class TaskServiceImpl implements TaskService {
     public TaskServiceModel add(TaskAddBindingModel taskAddBindingModel) throws InterruptedException, MessagingException {
 
         if (!this.validationUtil.isValid(taskAddBindingModel)) {
-            throw new UnprocessableEntityException(VALIDATION_FAILED);
+            throw new UnprocessableEntityException(VALIDATION_FAILURE);
         }
 
         String title = taskAddBindingModel.getTitle();

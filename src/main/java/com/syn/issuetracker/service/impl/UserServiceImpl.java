@@ -7,10 +7,10 @@ import com.syn.issuetracker.exception.UnprocessableEntityException;
 import com.syn.issuetracker.model.binding.UserEditBindingModel;
 import com.syn.issuetracker.model.entity.UserRoleEntity;
 import com.syn.issuetracker.model.view.UserViewModel;
-import com.syn.issuetracker.payload.request.SignUpRequest;
+import com.syn.issuetracker.model.payload.request.SignUpRequest;
 import com.syn.issuetracker.model.entity.UserEntity;
 import com.syn.issuetracker.model.service.UserServiceModel;
-import com.syn.issuetracker.payload.request.LoginRequest;
+import com.syn.issuetracker.model.payload.request.LoginRequest;
 import com.syn.issuetracker.repository.UserRepository;
 import com.syn.issuetracker.repository.UserRoleRepository;
 import com.syn.issuetracker.service.TaskService;
@@ -52,9 +52,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public LoginRequest register(SignUpRequest signUpRequest) {
 
+        if (!this.validationUtil.isValid(signUpRequest)) {
+            throw new UnprocessableEntityException(VALIDATION_FAILURE);
+        }
+
         String email = signUpRequest.getEmail();
-        if (this.userRepository.findByUsername(email).isPresent()) {
+        if (this.userRepository.findByEmail(email).isPresent()) {
             throw new DataConflictException(EMAIL_ALREADY_EXISTS);
+        }
+
+        String username = signUpRequest.getUsername();
+        if (this.userRepository.findByUsername(username).isPresent()) {
+            throw new DataConflictException(USERNAME_ALREADY_EXISTS);
         }
 
         UserEntity user = this.modelMapper.map(signUpRequest, UserEntity.class);
@@ -98,23 +107,24 @@ public class UserServiceImpl implements UserService {
     public UserServiceModel edit(UserEditBindingModel userEditBindingModel, String userId) {
 
         if (!this.validationUtil.isValid(userEditBindingModel)) {
-            throw new UnprocessableEntityException(VALIDATION_FAILED);
+            throw new UnprocessableEntityException(VALIDATION_FAILURE);
         }
 
         UserEntity userEntity = this.userRepository.findById(userId)
                 .orElseThrow(() -> { throw new CustomEntityNotFoundException(USER_NOT_FOUND); });
 
-        // todo: check if username already used
+        if (this.isAlreadyUsedUsername(userEditBindingModel.getUsername(), userId)) {
+            throw new DataConflictException(USERNAME_ALREADY_EXISTS);
+        }
+
+        if (this.isAlreadyUsedEmail(userEditBindingModel.getEmail(), userId)) {
+            throw new DataConflictException(EMAIL_ALREADY_EXISTS);
+        }
+
         userEntity.setUsername(userEditBindingModel.getUsername());
-        // todo: check if email already used
         userEntity.setEmail(userEditBindingModel.getEmail());
 
-        List<UserRoleEntity> newAuthorities = new ArrayList<>();
-        userEditBindingModel.getAuthorities()
-                .forEach(a -> {
-                    UserRole role = a.getRole();
-                    newAuthorities.add(this.userRoleRepository.findByRole(role));
-                });
+        List<UserRoleEntity> newAuthorities = getUserRoles(userEditBindingModel);
 
         if (!newAuthorities.isEmpty()) {
             userEntity.setAuthorities(newAuthorities);
@@ -146,4 +156,23 @@ public class UserServiceImpl implements UserService {
         return this.userRepository.getIfAdmin(userId).isPresent();
     }
 
+    private boolean isAlreadyUsedEmail(String email, String userId) {
+        Optional<UserEntity> foundUser = this.userRepository.findByEmail(email);
+        return foundUser.isPresent() && !foundUser.get().getId().equals(userId);
+    }
+
+    private boolean isAlreadyUsedUsername(String username, String userId) {
+        Optional<UserEntity> foundUser = this.userRepository.findByEmail(username);
+        return foundUser.isPresent() && !foundUser.get().getId().equals(userId);
+    }
+
+    private List<UserRoleEntity> getUserRoles(UserEditBindingModel userEditBindingModel) {
+        List<UserRoleEntity> newAuthorities = new ArrayList<>();
+        userEditBindingModel.getAuthorities()
+                .forEach(a -> {
+                    UserRole role = a.getRole();
+                    newAuthorities.add(this.userRoleRepository.findByRole(role));
+                });
+        return newAuthorities;
+    }
 }

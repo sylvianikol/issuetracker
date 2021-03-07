@@ -2,9 +2,9 @@ package com.syn.issuetracker.service.impl;
 
 import com.auth0.jwt.JWT;
 import com.syn.issuetracker.exception.UnprocessableEntityException;
-import com.syn.issuetracker.payload.request.LoginRequest;
-import com.syn.issuetracker.payload.request.SignUpRequest;
-import com.syn.issuetracker.payload.response.JwtResponse;
+import com.syn.issuetracker.model.payload.request.LoginRequest;
+import com.syn.issuetracker.model.payload.request.SignUpRequest;
+import com.syn.issuetracker.model.payload.response.JwtResponse;
 import com.syn.issuetracker.security.UserDetailsImpl;
 import com.syn.issuetracker.service.AuthService;
 import com.syn.issuetracker.service.UserService;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
-import static com.syn.issuetracker.common.ExceptionErrorMessages.VALIDATION_FAILED;
+import static com.syn.issuetracker.common.ExceptionErrorMessages.VALIDATION_FAILURE;
 import static com.syn.issuetracker.common.SecurityConstants.EXPIRATION_TIME;
 import static com.syn.issuetracker.common.SecurityConstants.SECRET;
 
@@ -46,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
     public JwtResponse register(SignUpRequest signUpRequest) {
 
         if (!this.validationUtil.isValid(signUpRequest)) {
-            throw new UnprocessableEntityException(VALIDATION_FAILED);
+            throw new UnprocessableEntityException(VALIDATION_FAILURE);
         }
 
         LoginRequest loginRequest = this.userService.register(signUpRequest);
@@ -58,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
     public JwtResponse login(LoginRequest loginRequest) {
 
         if (!this.validationUtil.isValid(loginRequest)) {
-            throw new UnprocessableEntityException(VALIDATION_FAILED);
+            throw new UnprocessableEntityException(VALIDATION_FAILURE);
         }
 
         Authentication authentication = this.authenticationManager.authenticate(

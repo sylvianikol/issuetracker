@@ -1,8 +1,8 @@
 package com.syn.issuetracker.service;
 
-import com.syn.issuetracker.payload.request.LoginRequest;
-import com.syn.issuetracker.payload.request.SignUpRequest;
-import com.syn.issuetracker.payload.response.JwtResponse;
+import com.syn.issuetracker.model.payload.request.LoginRequest;
+import com.syn.issuetracker.model.payload.request.SignUpRequest;
+import com.syn.issuetracker.model.payload.response.JwtResponse;
 
 public interface AuthService {
 

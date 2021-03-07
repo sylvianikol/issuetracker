@@ -28,20 +28,20 @@ public class ValidationUtilImpl implements ValidationUtil {
         return this.validator.validate(entity);
     }
 
-    @Override
-    public <T> ErrorContainer getViolations(T entity) {
-        Set<ConstraintViolation<T>> violations = this.violations(entity);
-
-        ErrorContainer errorContainer = new ErrorContainer();
-
-        for (ConstraintViolation<T> violation : violations) {
-            String key = violation.getPropertyPath().toString();
-            String value = violation.getMessage();
-
+//    @Override
+//    public <T> ErrorContainer getViolations(T entity) {
+//        Set<ConstraintViolation<T>> violations = this.violations(entity);
+//
+//        ErrorContainer errorContainer = new ErrorContainer();
+//
+//        for (ConstraintViolation<T> violation : violations) {
+//            String key = violation.getPropertyPath().toString();
+//            String value = violation.getMessage();
+//
 //            errorContainer.getErrors().putIfAbsent(key, new HashSet<>());
 //            errorContainer.getErrors().get(key).add(value);
-        }
-
-        return errorContainer;
-    }
+//        }
+//
+//        return errorContainer;
+//    }
 }

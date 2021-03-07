@@ -16,7 +16,7 @@ public class UserEntity extends BaseEntity {
     public UserEntity() {
     }
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true, length = 30)
     public String getUsername() {
         return username;
     }
@@ -25,7 +25,7 @@ public class UserEntity extends BaseEntity {
         this.username = name;
     }
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     public String getEmail() {
         return email;
     }

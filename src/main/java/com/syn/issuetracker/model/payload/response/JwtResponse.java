@@ -1,4 +1,4 @@
-package com.syn.issuetracker.payload.response;
+package com.syn.issuetracker.model.payload.response;
 
 import java.util.Date;
 import java.util.List;

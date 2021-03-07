@@ -1,7 +1,6 @@
 package com.syn.issuetracker.web;
 
 import com.syn.issuetracker.model.binding.UserEditBindingModel;
-import com.syn.issuetracker.payload.request.SignUpRequest;
 import com.syn.issuetracker.model.service.UserServiceModel;
 import com.syn.issuetracker.model.view.UserViewModel;
 import com.syn.issuetracker.service.UserService;

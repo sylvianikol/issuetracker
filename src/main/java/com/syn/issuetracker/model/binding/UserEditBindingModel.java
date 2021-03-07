@@ -1,6 +1,11 @@
 package com.syn.issuetracker.model.binding;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.List;
+
+import static com.syn.issuetracker.common.ValidationErrorMessages.*;
 
 public class UserEditBindingModel {
 
@@ -11,6 +16,8 @@ public class UserEditBindingModel {
     public UserEditBindingModel() {
     }
 
+    @NotBlank(message = USERNAME_BLANK)
+    @Size(min = 3, max = 30, message = USERNAME_LENGTH)
     public String getUsername() {
         return username;
     }
@@ -19,6 +26,8 @@ public class UserEditBindingModel {
         this.username = username;
     }
 
+    @NotBlank(message = EMAIL_BLANK)
+    @Email(message = EMAIL_NOT_VALID)
     public String getEmail() {
         return email;
     }

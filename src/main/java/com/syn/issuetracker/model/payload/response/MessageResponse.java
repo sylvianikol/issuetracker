@@ -1,4 +1,4 @@
-package com.syn.issuetracker.payload.response;
+package com.syn.issuetracker.model.payload.response;
 
 public class MessageResponse {
     private String message;

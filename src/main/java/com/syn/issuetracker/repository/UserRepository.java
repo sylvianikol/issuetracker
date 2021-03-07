@@ -14,6 +14,8 @@ public interface UserRepository extends JpaRepository<UserEntity, String>, JpaSp
 
     Optional<UserEntity> findByUsername(String username);
 
+    Optional<UserEntity> findByEmail(String email);
+
     @Query("SELECT u FROM UserEntity u " +
             "JOIN u.authorities roles " +
             "WHERE u.id = :userId AND roles.role = 'ROLE_ADMIN'")

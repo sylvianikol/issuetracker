@@ -1,4 +1,9 @@
-package com.syn.issuetracker.payload.request;
+package com.syn.issuetracker.model.payload.request;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
+import static com.syn.issuetracker.common.ValidationErrorMessages.*;
 
 public class LoginRequest {
 
@@ -13,6 +18,8 @@ public class LoginRequest {
         this.password = password;
     }
 
+    @NotBlank(message = USERNAME_BLANK)
+    @Size(min = 3, max = 30, message = USERNAME_LENGTH)
     public String getUsername() {
         return username;
     }
@@ -21,6 +28,8 @@ public class LoginRequest {
         this.username = username;
     }
 
+    @NotBlank(message = PASSWORD_BLANK)
+    @Size(min = 6, message = PASSWORD_LENGTH)
     public String getPassword() {
         return password;
     }
