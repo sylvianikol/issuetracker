@@ -17,7 +17,6 @@ public class ValidationErrorMessages {
     public static final String DATE_NULL = "Date can not be null";
     public static final String DATE_FUTURE = "Date cannot be in the future";
 
-    public static final String STATUS_BLANK = "Status can not be empty!";
-    public static final String DEVELOPER_NULL = "Developer can not be null!";
-    public static final String PRIORITY_BLANK = "Priority can not be empty!";
+    public static final String PRIORITY_NOT_VALID = "Priority is not valid!";
+    public static final String STATUS_NOT_VALID = "Status is not valid!";
 }

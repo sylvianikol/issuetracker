@@ -1,5 +1,6 @@
 package com.syn.issuetracker.model.binding;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
@@ -33,6 +34,7 @@ public class TaskAddBindingModel {
         this.description = description;
     }
 
+    @Min(value = 0, message = PRIORITY_NOT_VALID)
     public int getPriority() {
         return priority;
     }

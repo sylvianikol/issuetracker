@@ -68,7 +68,6 @@ public class TaskServiceModel extends BaseServiceModel {
         this.developer = developer;
     }
 
-    @NotBlank(message = PRIORITY_BLANK)
     public String getPriority() {
         return priority;
     }

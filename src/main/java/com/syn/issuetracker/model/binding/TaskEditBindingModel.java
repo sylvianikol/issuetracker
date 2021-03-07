@@ -1,10 +1,10 @@
 package com.syn.issuetracker.model.binding;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import static com.syn.issuetracker.common.ValidationErrorMessages.TITLE_BLANK;
-import static com.syn.issuetracker.common.ValidationErrorMessages.TITLE_LENGTH;
+import static com.syn.issuetracker.common.ValidationErrorMessages.*;
 
 public class TaskEditBindingModel {
 
@@ -35,6 +35,7 @@ public class TaskEditBindingModel {
         this.description = description;
     }
 
+    @Min(value = 0, message = PRIORITY_NOT_VALID)
     public int getPriority() {
         return priority;
     }
@@ -51,6 +52,7 @@ public class TaskEditBindingModel {
         this.developer = developer;
     }
 
+    @Min(value = 0, message = STATUS_NOT_VALID)
     public int getStatus() {
         return status;
     }
