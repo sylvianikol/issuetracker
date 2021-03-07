@@ -29,7 +29,7 @@ public class LoginRequest {
     }
 
     @NotBlank(message = PASSWORD_BLANK)
-    @Size(min = 6, message = PASSWORD_LENGTH)
+    @Size(min = 3, message = PASSWORD_LENGTH)
     public String getPassword() {
         return password;
     }

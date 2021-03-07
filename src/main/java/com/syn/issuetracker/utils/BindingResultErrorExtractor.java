@@ -6,7 +6,7 @@ import org.springframework.validation.BindingResult;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BindingResultErrorExtractor implements ErrorExtractorUtil<BindingResult, String> {
+public class BindingResultErrorExtractor implements ErrorExtractor<BindingResult, String> {
 
 
     public List<String> extract(BindingResult bindingResult) {
