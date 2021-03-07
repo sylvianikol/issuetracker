@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -45,10 +46,6 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public JwtResponse register(SignUpRequest signUpRequest) {
 
-        if (!this.validationUtil.isValid(signUpRequest)) {
-            throw new UnprocessableEntityException(VALIDATION_FAILURE);
-        }
-
         LoginRequest loginRequest = this.userService.register(signUpRequest);
 
         return this.login(loginRequest);
@@ -58,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
     public JwtResponse login(LoginRequest loginRequest) {
 
         if (!this.validationUtil.isValid(loginRequest)) {
-            throw new UnprocessableEntityException(VALIDATION_FAILURE);
+            throw new UnprocessableEntityException(VALIDATION_FAILURE, this.validationUtil.getViolations(loginRequest));
         }
 
         Authentication authentication = this.authenticationManager.authenticate(
@@ -75,7 +72,7 @@ public class AuthServiceImpl implements AuthService {
                 .sign(HMAC512(SECRET.getBytes()));
 
         List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
+                .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
         return new JwtResponse(token,

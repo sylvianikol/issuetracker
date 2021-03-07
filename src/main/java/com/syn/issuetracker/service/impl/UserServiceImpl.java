@@ -53,22 +53,24 @@ public class UserServiceImpl implements UserService {
     public LoginRequest register(SignUpRequest signUpRequest) {
 
         if (!this.validationUtil.isValid(signUpRequest)) {
-            throw new UnprocessableEntityException(VALIDATION_FAILURE);
+            throw new UnprocessableEntityException(VALIDATION_FAILURE, this.validationUtil.getViolations(signUpRequest));
         }
 
         String email = signUpRequest.getEmail();
-        if (this.userRepository.findByEmail(email).isPresent()) {
-            throw new DataConflictException(EMAIL_ALREADY_EXISTS);
+        String username = signUpRequest.getUsername();
+
+        if (this.getByEmail(email).isPresent()) {
+            throw new DataConflictException(DATA_CONFLICT, List.of(EMAIL_ALREADY_EXISTS));
         }
 
-        String username = signUpRequest.getUsername();
-        if (this.userRepository.findByUsername(username).isPresent()) {
-            throw new DataConflictException(USERNAME_ALREADY_EXISTS);
+        if (this.getByUsername(username).isPresent()) {
+            throw new DataConflictException(DATA_CONFLICT, List.of(USERNAME_ALREADY_EXISTS));
         }
 
         UserEntity user = this.modelMapper.map(signUpRequest, UserEntity.class);
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
         user.setAuthorities(List.of(this.userRoleRepository.findByRole(UserRole.ROLE_USER)));
+
         this.userRepository.save(user);
 
         return new LoginRequest(
@@ -107,32 +109,36 @@ public class UserServiceImpl implements UserService {
     public UserServiceModel edit(UserEditBindingModel userEditBindingModel, String userId) {
 
         if (!this.validationUtil.isValid(userEditBindingModel)) {
-            throw new UnprocessableEntityException(VALIDATION_FAILURE);
+            throw new UnprocessableEntityException(VALIDATION_FAILURE, this.validationUtil.getViolations(userEditBindingModel));
         }
 
-        UserEntity userEntity = this.userRepository.findById(userId)
-                .orElseThrow(() -> { throw new CustomEntityNotFoundException(USER_NOT_FOUND); });
+        UserEntity user = this.userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    throw new CustomEntityNotFoundException(NOT_FOUND, List.of(USER_NOT_FOUND)); });
 
-        if (this.isAlreadyUsedUsername(userEditBindingModel.getUsername(), userId)) {
-            throw new DataConflictException(USERNAME_ALREADY_EXISTS);
+        String username = userEditBindingModel.getUsername();
+        String email = userEditBindingModel.getEmail();
+
+        if (this.isAlreadyUsedUsername(username, userId)) {
+            throw new DataConflictException(DATA_CONFLICT, List.of(USERNAME_ALREADY_EXISTS));
         }
 
-        if (this.isAlreadyUsedEmail(userEditBindingModel.getEmail(), userId)) {
-            throw new DataConflictException(EMAIL_ALREADY_EXISTS);
+        if (this.isAlreadyUsedEmail(email, userId)) {
+            throw new DataConflictException(DATA_CONFLICT, List.of(EMAIL_ALREADY_EXISTS));
         }
 
-        userEntity.setUsername(userEditBindingModel.getUsername());
-        userEntity.setEmail(userEditBindingModel.getEmail());
+        user.setUsername(username);
+        user.setEmail(email);
 
-        List<UserRoleEntity> newAuthorities = getUserRoles(userEditBindingModel);
+        List<UserRoleEntity> newAuthorities = this.getUserRoles(userEditBindingModel);
 
         if (!newAuthorities.isEmpty()) {
-            userEntity.setAuthorities(newAuthorities);
+            user.setAuthorities(newAuthorities);
         }
 
-        this.userRepository.save(userEntity);
+        this.userRepository.save(user);
 
-        return this.modelMapper.map(userEntity, UserServiceModel.class);
+        return this.modelMapper.map(user, UserServiceModel.class);
     }
 
     @Override
@@ -162,8 +168,16 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean isAlreadyUsedUsername(String username, String userId) {
-        Optional<UserEntity> foundUser = this.userRepository.findByEmail(username);
+        Optional<UserEntity> foundUser = this.userRepository.findByUsername(username);
         return foundUser.isPresent() && !foundUser.get().getId().equals(userId);
+    }
+
+    private Optional<UserEntity> getByEmail(String email) {
+        return this.userRepository.findByEmail(email);
+    }
+
+    private Optional<UserEntity> getByUsername(String username) {
+        return this.userRepository.findByUsername(username);
     }
 
     private List<UserRoleEntity> getUserRoles(UserEditBindingModel userEditBindingModel) {
