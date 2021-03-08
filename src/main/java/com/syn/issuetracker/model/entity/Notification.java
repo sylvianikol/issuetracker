@@ -25,7 +25,7 @@ public class Notification extends BaseEntity {
         this.subject = subject;
     }
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     public String getMessage() {
         return message;
     }

@@ -114,7 +114,8 @@ public class TaskServiceImpl implements TaskService {
 
         this.taskRepository.save(task);
 
-        this.sendNotifications(task);
+        Notification notification = this.notificationService.create(task);
+        this.notificationService.sendNotification(notification);
 
         return this.modelMapper.map(task, TaskServiceModel.class);
     }
@@ -198,16 +199,5 @@ public class TaskServiceImpl implements TaskService {
     private boolean notUniqueTitle(String title, String taskId) {
         Optional<Task> found = this.taskRepository.findByTitle(title);
         return found.isPresent() && !found.get().getId().equals(taskId);
-    }
-
-    private void sendNotifications(Task task) throws MessagingException, InterruptedException {
-        Notification notification = this.notificationService.create(task);
-
-        NotificationExecutorFactory.getExecutor(NotificationType.IN_APP)
-                .sendNotification(notification);
-
-//        NotificationExecutorFactory.getExecutor(NotificationType.EMAIL)
-//                .sendNotification(notification);
-
     }
 }

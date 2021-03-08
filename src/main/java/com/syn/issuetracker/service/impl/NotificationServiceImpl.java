@@ -4,10 +4,14 @@ import com.syn.issuetracker.common.NotificationTemplates;
 import com.syn.issuetracker.model.entity.Notification;
 import com.syn.issuetracker.model.entity.Task;
 import com.syn.issuetracker.model.entity.UserEntity;
+import com.syn.issuetracker.model.enums.NotificationType;
+import com.syn.issuetracker.notification.NotificationExecutorFactory;
 import com.syn.issuetracker.repository.NotificationRepository;
 import com.syn.issuetracker.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.mail.MessagingException;
 
 import static com.syn.issuetracker.common.NotificationTemplates.NEW_TASK_INAPP_SUBJECT;
 import static com.syn.issuetracker.common.NotificationTemplates.TASK_NOTICE_TEMPLATE;
@@ -37,5 +41,14 @@ public class NotificationServiceImpl implements NotificationService {
         this.notificationRepository.save(notification);
 
         return notification;
+    }
+
+    @Override
+    public void sendNotification(Notification notification) throws MessagingException, InterruptedException {
+        NotificationExecutorFactory.getExecutor(NotificationType.IN_APP)
+                .sendNotification(notification);
+
+//        NotificationExecutorFactory.getExecutor(NotificationType.EMAIL)
+//                .sendNotification(notification);
     }
 }
