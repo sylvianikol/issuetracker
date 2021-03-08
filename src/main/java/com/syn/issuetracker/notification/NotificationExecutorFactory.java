@@ -11,7 +11,7 @@ public class NotificationExecutorFactory {
                 return new EmailNotificationExecutor();
             }
             case IN_APP -> {
-                // todo: add case for 'In-app notification'
+                return new InAppNotificationExecutor();
             }
         }
         return null;

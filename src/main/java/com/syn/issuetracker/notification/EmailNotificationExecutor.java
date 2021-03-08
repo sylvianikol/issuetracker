@@ -1,5 +1,6 @@
 package com.syn.issuetracker.notification;
 
+import com.syn.issuetracker.model.entity.Notification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -22,19 +23,14 @@ public class EmailNotificationExecutor implements NotificationExecutor {
 
     @Override
     @Async
-    public void sendNotification(String username, String userEmail, String taskTitle,
-                                 String taskDescription, String taskPriority, String taskId) throws InterruptedException, MessagingException {
+    public void sendNotification(Notification notification) throws InterruptedException, MessagingException {
         
         JavaMailSender javaMailSender = javaMailSender();
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
 
-        String emailTemplate = String.format(TASK_NOTICE_TEMPLATE,
-                username,
-                taskTitle,
-                taskDescription,
-                taskPriority,
-                taskId);
+        String emailTemplate = notification.getMessage();
+        String userEmail = notification.getUser().getEmail();
 
         helper.setText(emailTemplate, true);
         helper.setTo(userEmail);

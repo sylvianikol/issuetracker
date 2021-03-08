@@ -1,10 +1,14 @@
 package com.syn.issuetracker.service.impl;
 
+import com.syn.issuetracker.model.entity.Notification;
+import com.syn.issuetracker.model.enums.NotificationType;
 import com.syn.issuetracker.model.enums.Priority;
 import com.syn.issuetracker.model.enums.Status;
 import com.syn.issuetracker.exception.CustomEntityNotFoundException;
 import com.syn.issuetracker.exception.DataConflictException;
 import com.syn.issuetracker.exception.UnprocessableEntityException;
+import com.syn.issuetracker.notification.NotificationExecutorFactory;
+import com.syn.issuetracker.service.NotificationService;
 import com.syn.issuetracker.specification.TaskSpecification;
 import com.syn.issuetracker.model.binding.TaskAddBindingModel;
 import com.syn.issuetracker.model.binding.TaskEditBindingModel;
@@ -29,22 +33,25 @@ import java.util.*;
 
 import static com.syn.issuetracker.common.ExceptionErrorMessages.*;
 import static com.syn.issuetracker.common.MiscConstants.*;
+import static com.syn.issuetracker.common.NotificationTemplates.NEW_TASK_INAPP_SUBJECT;
 
 @Service
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
     private final UserService userService;
+    private final NotificationService notificationService;
     private final ModelMapper modelMapper;
     private final ValidationUtil validationUtil;
 
     @Autowired
     public TaskServiceImpl(TaskRepository taskRepository,
                            @Lazy UserService userService,
-                           ModelMapper modelMapper,
+                           NotificationService notificationService, ModelMapper modelMapper,
                            ValidationUtil validationUtil) {
         this.taskRepository = taskRepository;
         this.userService = userService;
+        this.notificationService = notificationService;
         this.modelMapper = modelMapper;
         this.validationUtil = validationUtil;
     }
@@ -107,9 +114,7 @@ public class TaskServiceImpl implements TaskService {
 
         this.taskRepository.save(task);
 
-//        NotificationExecutorFactory.getExecutor(NotificationType.EMAIL)
-//                .sendNotification(user.getUsername(), user.getEmail(), task.getTitle(),
-//                        task.getDescription(), task.getPriority().toString(), task.getId());
+        this.sendNotifications(task);
 
         return this.modelMapper.map(task, TaskServiceModel.class);
     }
@@ -193,5 +198,16 @@ public class TaskServiceImpl implements TaskService {
     private boolean notUniqueTitle(String title, String taskId) {
         Optional<Task> found = this.taskRepository.findByTitle(title);
         return found.isPresent() && !found.get().getId().equals(taskId);
+    }
+
+    private void sendNotifications(Task task) throws MessagingException, InterruptedException {
+        Notification notification = this.notificationService.create(task);
+
+        NotificationExecutorFactory.getExecutor(NotificationType.IN_APP)
+                .sendNotification(notification);
+
+//        NotificationExecutorFactory.getExecutor(NotificationType.EMAIL)
+//                .sendNotification(notification);
+
     }
 }

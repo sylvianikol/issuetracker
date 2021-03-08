@@ -1,9 +1,10 @@
 package com.syn.issuetracker.notification;
 
+import com.syn.issuetracker.model.entity.Notification;
+
 import javax.mail.MessagingException;
 
 public interface NotificationExecutor {
 
-    void sendNotification(String username, String userEmail, String taskTitle,
-                          String taskDescription, String taskPriority, String taskId) throws InterruptedException, MessagingException;
+    void sendNotification(Notification notification) throws InterruptedException, MessagingException;
 }
