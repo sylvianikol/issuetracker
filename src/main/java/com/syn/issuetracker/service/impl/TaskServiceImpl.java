@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.syn.issuetracker.common.ExceptionErrorMessages.*;
+import static com.syn.issuetracker.common.MiscConstants.*;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -73,10 +74,10 @@ public class TaskServiceImpl implements TaskService {
         tasks = taskPage.getContent();
 
         Map<String, Object> response = new HashMap<>();
-        response.put("tasks", Collections.unmodifiableList(tasks));
-        response.put("currentPage", taskPage.getNumber());
-        response.put("totalItems", taskPage.getTotalElements());
-        response.put("totalPages", taskPage.getTotalPages());
+        response.put(TASKS, Collections.unmodifiableList(tasks));
+        response.put(CURRENT_PAGE, taskPage.getNumber());
+        response.put(TOTAL_ITEMS, taskPage.getTotalElements());
+        response.put(TOTAL_PAGES, taskPage.getTotalPages());
 
         return response;
     }
@@ -156,7 +157,7 @@ public class TaskServiceImpl implements TaskService {
     public void delete(String taskId) {
         Task task = this.taskRepository.findById(taskId)
                 .orElseThrow(() -> {
-                    throw new CustomEntityNotFoundException(TASK_NOT_FOUND);
+                    throw new CustomEntityNotFoundException(NOT_FOUND, List.of(TASK_NOT_FOUND));
                 });
 
         this.taskRepository.delete(task);
@@ -164,6 +165,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void deleteAll(String userId) {
+
+        this.userService.findById(userId)
+                .orElseThrow(() -> { throw new CustomEntityNotFoundException(NOT_FOUND, List.of(USER_NOT_FOUND)); });
 
         if (this.isAdmin(userId)) {
             this.taskRepository.deleteAll();
@@ -174,7 +178,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void unassignTasks(String userId) {
+    public void unAssignTasks(String userId) {
 
         this.taskRepository.getAllByUserId(userId).forEach(task -> {
             task.setDeveloper(null);

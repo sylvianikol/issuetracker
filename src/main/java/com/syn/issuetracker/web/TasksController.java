@@ -23,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.*;
 
 import static com.syn.issuetracker.common.ExceptionErrorMessages.VALIDATION_FAILURE;
+import static com.syn.issuetracker.common.MiscConstants.TOTAL_ITEMS;
 
 @CrossOrigin("http://localhost:4200")
 @RestController
@@ -48,7 +49,7 @@ public class TasksController {
 
         Map<String, Object> response = this.taskService.getAll(new TaskSpecification(userId, title), pageable);
 
-        return (long) response.get("totalItems") == 0L
+        return (long) response.get(TOTAL_ITEMS) == 0L
                 ? ResponseEntity.notFound().build()
                 : ResponseEntity.ok().body(response);
     }

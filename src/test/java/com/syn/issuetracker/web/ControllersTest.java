@@ -1,8 +1,5 @@
 package com.syn.issuetracker.web;
 
-import com.syn.issuetracker.web.AuthController;
-import com.syn.issuetracker.web.TasksController;
-import com.syn.issuetracker.web.UserController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,7 +17,7 @@ public class ControllersTest {
     private TasksController tasksController;
 
     @Test
-    public void contextLoads() throws Exception {
+    public void contextLoads() {
         assertThat(authController).isNotNull();
         assertThat(userController).isNotNull();
         assertThat(tasksController).isNotNull();

@@ -147,7 +147,7 @@ public class UserServiceImpl implements UserService {
         UserEntity user = this.userRepository.findById(userId)
                 .orElseThrow(() -> { throw new CustomEntityNotFoundException(USER_NOT_FOUND); });
 
-        this.taskService.unassignTasks(user.getId());
+        this.taskService.unAssignTasks(user.getId());
 
         this.userRepository.delete(user);
     }
