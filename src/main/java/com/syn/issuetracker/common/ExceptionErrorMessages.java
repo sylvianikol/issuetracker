@@ -11,6 +11,8 @@ public class ExceptionErrorMessages {
     public static final String TITLE_ALREADY_EXISTS = "Title already exists!";
     public static final String USER_NOT_FOUND = "User not found!";
     public static final String TASK_NOT_FOUND = "Task not found!";
+    public static final String NO_TASKS_FOUND = "No tasks found!";
+    public static final String NO_USERS_FOUND = "No users found!";
 
     public static final String EMAIL_NOT_FOUND = "User with this email was not found!";
 

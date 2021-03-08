@@ -1,4 +1,4 @@
-package com.syn.issuetracker.web;
+package com.syn.issuetracker.web.util;
 
 import java.io.IOException;
 

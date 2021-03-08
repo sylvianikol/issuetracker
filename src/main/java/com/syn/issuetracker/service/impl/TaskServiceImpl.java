@@ -65,7 +65,7 @@ public class TaskServiceImpl implements TaskService {
             if (title == null) {
                 taskPage = this.taskRepository.findAll(pageable);
             } else {
-                taskPage = this.taskRepository.findAllByTitle(title, pageable);
+                taskPage = this.taskRepository.findAllByTitleContaining(title, pageable);
             }
         } else {
             taskPage = this.taskRepository.findAll(taskSpecification, pageable);

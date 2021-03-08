@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
@@ -23,7 +24,7 @@ import javax.validation.Valid;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.syn.issuetracker.common.ExceptionErrorMessages.VALIDATION_FAILURE;
+import static com.syn.issuetracker.common.ExceptionErrorMessages.*;
 import static com.syn.issuetracker.common.MiscConstants.TOTAL_ITEMS;
 
 @CrossOrigin("http://localhost:4200")
@@ -52,7 +53,7 @@ public class UserController {
                 .getAll(new UserSpecification(username), pageable);
 
         return (long) response.get(TOTAL_ITEMS) == 0L
-                ? ResponseEntity.notFound().build()
+                ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", NO_USERS_FOUND))
                 : ResponseEntity.ok().body(response);
     }
 

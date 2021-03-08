@@ -1,4 +1,4 @@
-package com.syn.issuetracker.web.service;
+package com.syn.issuetracker.web.util;
 
 import com.syn.issuetracker.model.binding.TaskAddBindingModel;
 import com.syn.issuetracker.model.binding.TaskEditBindingModel;
@@ -16,8 +16,6 @@ import com.syn.issuetracker.repository.TaskRepository;
 import com.syn.issuetracker.repository.UserRepository;
 import com.syn.issuetracker.repository.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +25,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Service
-public class SetUpServiceImpl implements SetUpService {
+public class SetUpUtilImpl implements SetUpUtil {
 
     @Autowired
     private TaskRepository taskRepository;

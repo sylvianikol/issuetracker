@@ -1,4 +1,4 @@
-package com.syn.issuetracker.web.service;
+package com.syn.issuetracker.web.util;
 
 import com.syn.issuetracker.model.binding.TaskAddBindingModel;
 import com.syn.issuetracker.model.binding.TaskEditBindingModel;
@@ -15,7 +15,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface SetUpService {
+public interface SetUpUtil {
 
     void tearDown();
 

@@ -21,7 +21,7 @@ public class UserSpecification implements Specification<UserEntity> {
         Predicate predicate = cb.conjunction();
 
         if (username != null) {
-            predicate.getExpressions().add(cb.equal(root.get("username"), username));
+            predicate.getExpressions().add(cb.like(root.get("username"), "%" + username + "%"));
         }
 
         return predicate;

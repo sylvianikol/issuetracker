@@ -20,7 +20,7 @@ public interface TaskRepository extends JpaRepository<Task, String>, JpaSpecific
             "ORDER BY t.createdOn DESC, t.status ")
     List<Task> getAllByUserId(@Param(value = "userId") String userId);
 
-    Page<Task> findAllByTitle(String title, Pageable pageable);
+    Page<Task> findAllByTitleContaining(String title, Pageable pageable);
 
     Optional<Task> findByTitle(String title);
 }

@@ -5,9 +5,8 @@ import com.syn.issuetracker.model.entity.UserRoleEntity;
 import com.syn.issuetracker.model.enums.UserRole;
 import com.syn.issuetracker.model.payload.request.LoginRequest;
 import com.syn.issuetracker.model.payload.request.SignUpRequest;
-import com.syn.issuetracker.repository.UserRepository;
-import com.syn.issuetracker.repository.UserRoleRepository;
-import com.syn.issuetracker.web.service.SetUpService;
+import com.syn.issuetracker.web.util.SetUpUtil;
+import com.syn.issuetracker.web.util.JsonMapper;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +34,7 @@ class AuthControllerTest extends JsonMapper {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private SetUpService setUp;
+    private SetUpUtil setUp;
 
     private String USER_EMAIL;
     private String USERNAME;

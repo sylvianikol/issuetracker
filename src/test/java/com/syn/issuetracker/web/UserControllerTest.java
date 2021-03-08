@@ -6,7 +6,8 @@ import com.syn.issuetracker.model.entity.UserEntity;
 import com.syn.issuetracker.model.entity.UserRoleEntity;
 import com.syn.issuetracker.model.enums.UserRole;
 
-import com.syn.issuetracker.web.service.SetUpService;
+import com.syn.issuetracker.web.util.SetUpUtil;
+import com.syn.issuetracker.web.util.JsonMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,7 +38,7 @@ class UserControllerTest extends JsonMapper {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private SetUpService setUp;
+    private SetUpUtil setUp;
 
     private String USER_ID;
     private String USERNAME;

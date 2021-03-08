@@ -28,7 +28,7 @@ public class TaskSpecification implements Specification<Task> {
         }
 
         if (title != null) {
-            predicate.getExpressions().add(cb.equal(root.get("title").get("title"), title));
+            predicate.getExpressions().add(cb.like(root.get("title"), "%" + title + "%"));
         }
 
         return predicate;
