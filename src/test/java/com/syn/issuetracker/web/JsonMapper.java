@@ -26,7 +26,7 @@ public abstract class JsonMapper {
     @Autowired
     WebApplicationContext webApplicationContext;
 
-    protected void setUp() {
+    protected void init() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
     }
 

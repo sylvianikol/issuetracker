@@ -5,13 +5,9 @@ import com.syn.issuetracker.model.binding.TaskEditBindingModel;
 import com.syn.issuetracker.model.entity.Task;
 import com.syn.issuetracker.model.entity.UserEntity;
 import com.syn.issuetracker.model.entity.UserRoleEntity;
-import com.syn.issuetracker.model.enums.Priority;
-import com.syn.issuetracker.model.enums.Status;
 import com.syn.issuetracker.model.enums.UserRole;
-import com.syn.issuetracker.repository.TaskRepository;
 
-import com.syn.issuetracker.repository.UserRepository;
-import com.syn.issuetracker.repository.UserRoleRepository;
+import com.syn.issuetracker.web.service.SetUpService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +19,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.syn.issuetracker.common.ExceptionErrorMessages.*;
@@ -42,14 +37,8 @@ class TasksControllerTest extends JsonMapper {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private TaskRepository taskRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private UserRoleRepository userRoleRepository;
+    private SetUpService setUp;
 
-    private UserEntity ADMIN;
-    private UserEntity USER;
     private String ADMIN_ID;
     private String USER_ID;
     private String TASK1_ID;
@@ -57,43 +46,35 @@ class TasksControllerTest extends JsonMapper {
     private String TASK1_TITLE;
 
     @BeforeEach
-    public void setUp() {
-        this.tearDown();
+    public void init() {
+        this.setUp.tearDown();
 
-        UserRoleEntity roleAdmin = this.createUserRole(UserRole.ROLE_ADMIN);
-        UserRoleEntity roleUser = this.createUserRole(UserRole.ROLE_USER);
+        UserRoleEntity roleAdmin = this.setUp.createUserRole(UserRole.ROLE_ADMIN);
+        UserRoleEntity roleUser = this.setUp.createUserRole(UserRole.ROLE_USER);
 
-        ADMIN = this.createUser(List.of(roleAdmin, roleUser), "admin", "admin@mail.com", "123");
-        USER = this.createUser(List.of(roleUser), "user", "user@mail.com", "123");
+        UserEntity admin = this.setUp
+                .createUser(List.of(roleAdmin, roleUser), "admin", "admin@mail.com", "123");
+        UserEntity user = this.setUp
+                .createUser(List.of(roleUser), "user", "user@mail.com", "123");
 
-        this.userRepository.save(ADMIN);
-        this.userRepository.save(USER);
-
-        Task task1 = this.createTask(ADMIN, "Test task", "Description test");
-        Task task2 = this.createTask(USER, "Another Test task", "Description test");
-
-        this.taskRepository.save(task1);
-        this.taskRepository.save(task2);
+        Task task1 = this.setUp.createTask(admin, "Test task", "Description test");
+        Task task2 = this.setUp.createTask(user, "Another Test task", "Description test");
 
         TASK1_ID = task1.getId();
         TASK2_ID = task2.getId();
         TASK1_TITLE = task1.getTitle();
-        ADMIN_ID = ADMIN.getId();
-        USER_ID = USER.getId();
+        ADMIN_ID = admin.getId();
+        USER_ID = user.getId();
     }
 
     @AfterEach
     public void tearDown() {
-        this.taskRepository.deleteAll();
-        this.userRepository.deleteAll();
-        this.userRoleRepository.deleteAll();
+        this.setUp.tearDown();
     }
 
     @Test
     void injectedComponentsAreNotNull() {
-        assertThat(this.taskRepository).isNotNull();
-        assertThat(this.userRepository).isNotNull();
-        assertThat(this.userRoleRepository).isNotNull();
+        this.setUp.injectedComponentsAreNotNull();
     }
 
     @WithMockUser(username="admin")
@@ -110,7 +91,7 @@ class TasksControllerTest extends JsonMapper {
     @WithMockUser(username="admin")
     @Test
     void test_getAll_isNotFound() throws Exception {
-        this.taskRepository.deleteAll();
+        this.setUp.deleteAllTasks();
         this.mockMvc.perform(MockMvcRequestBuilders
                 .get("/tasks")
                 .param("userId", ADMIN_ID))
@@ -150,7 +131,7 @@ class TasksControllerTest extends JsonMapper {
     @Test
     void test_add_isOk() throws Exception {
 
-        TaskAddBindingModel taskToAdd = this.createTaskToAdd("New Task", "New Desc");
+        TaskAddBindingModel taskToAdd = this.setUp.createTaskToAdd("New Task", "New Desc", ADMIN_ID);
 
         String inputJson = super.mapToJson(taskToAdd);
 
@@ -164,7 +145,7 @@ class TasksControllerTest extends JsonMapper {
     @Test
     void test_add_isUnprocessable_whenInvalidTitle() throws Exception {
 
-        TaskAddBindingModel taskToAdd = this.createTaskToAdd("", "New Desc");
+        TaskAddBindingModel taskToAdd = this.setUp.createTaskToAdd("", "New Desc", ADMIN_ID);
 
         String inputJson = super.mapToJson(taskToAdd);
 
@@ -181,7 +162,7 @@ class TasksControllerTest extends JsonMapper {
     @Test
     void test_add_isConflict_whenTitleExists() throws Exception {
 
-        TaskAddBindingModel taskToAdd = this.createTaskToAdd(TASK1_TITLE, "New Desc");
+        TaskAddBindingModel taskToAdd = this.setUp.createTaskToAdd(TASK1_TITLE, "New Desc", ADMIN_ID);
 
         String inputJson = super.mapToJson(taskToAdd);
 
@@ -197,7 +178,7 @@ class TasksControllerTest extends JsonMapper {
     @Test
     void test_edit_isOk() throws Exception {
 
-        TaskEditBindingModel taskToEdit = this.createTaskToEdit(
+        TaskEditBindingModel taskToEdit = this.setUp.createTaskToEdit(
                 "Edited Title", "Edited Desc", 2, USER_ID, 2);
 
         String inputJson = super.mapToJson(taskToEdit);
@@ -212,7 +193,7 @@ class TasksControllerTest extends JsonMapper {
     @Test
     void test_edit_isUnprocessable_whenInvalidTitle() throws Exception {
 
-        TaskEditBindingModel taskToEdit = this.createTaskToEdit(
+        TaskEditBindingModel taskToEdit = this.setUp.createTaskToEdit(
                 "", "Edited Desc", 2, USER_ID, 2);
 
         String inputJson = super.mapToJson(taskToEdit);
@@ -230,7 +211,7 @@ class TasksControllerTest extends JsonMapper {
     @Test
     void test_edit_isNotFound() throws Exception {
 
-        TaskEditBindingModel taskToEdit = this.createTaskToEdit(
+        TaskEditBindingModel taskToEdit = this.setUp.createTaskToEdit(
                 "Edited Title", "Edited Desc", 2, USER_ID, 2);
 
         String inputJson = super.mapToJson(taskToEdit);
@@ -247,7 +228,7 @@ class TasksControllerTest extends JsonMapper {
     @Test
     void test_edit_isConflict_whenNotUniqueTitle() throws Exception {
 
-        TaskEditBindingModel taskToEdit = this.createTaskToEdit(
+        TaskEditBindingModel taskToEdit = this.setUp.createTaskToEdit(
                 TASK1_TITLE, "Edited Desc", 2, USER_ID, 2);
 
         String inputJson = super.mapToJson(taskToEdit);
@@ -295,7 +276,7 @@ class TasksControllerTest extends JsonMapper {
         this.mockMvc.perform(delete("/tasks")
                 .param("userId", ADMIN_ID));
 
-        assertThat(this.taskRepository.count() == 0);
+        assertThat(this.setUp.tasksEmpty());
     }
 
     @WithMockUser(username="user")
@@ -305,53 +286,6 @@ class TasksControllerTest extends JsonMapper {
         this.mockMvc.perform(delete("/tasks")
                 .param("userId", USER_ID));
 
-        assertThat(this.taskRepository.count() == 1);
-    }
-
-    //////  *** ////////  *** ////////  *** ////////  *** ////////
-    private UserRoleEntity createUserRole(UserRole userRole) {
-        UserRoleEntity role = new UserRoleEntity(userRole);
-        this.userRoleRepository.save(role);
-
-        return role;
-    }
-
-    private UserEntity createUser(List<UserRoleEntity> roles, String name, String email, String password) {
-        UserEntity user = new UserEntity();
-        user.setUsername(name);
-        user.setEmail(email);
-        user.setPassword(password);
-        user.setAuthorities(roles);
-        return user;
-    }
-
-    private Task createTask(UserEntity user, String title, String desc) {
-        Task task1 = new Task();
-        task1.setTitle(title);
-        task1.setDescription(desc);
-        task1.setPriority(Priority.HIGH);
-        task1.setStatus(Status.PENDING);
-        task1.setCreatedOn(LocalDateTime.now());
-        task1.setDeveloper(user);
-        return task1;
-    }
-
-    private TaskAddBindingModel createTaskToAdd(String title, String desc) {
-        TaskAddBindingModel taskToAdd = new TaskAddBindingModel();
-        taskToAdd.setTitle(title);
-        taskToAdd.setDescription(desc);
-        taskToAdd.setPriority(0);
-        taskToAdd.setDeveloper(ADMIN_ID);
-        return taskToAdd;
-    }
-
-    private TaskEditBindingModel createTaskToEdit(String title, String desc, int priority, String developer, int status) {
-        TaskEditBindingModel taskToEdit = new TaskEditBindingModel();
-        taskToEdit.setTitle(title);
-        taskToEdit.setDescription(desc);
-        taskToEdit.setPriority(priority);
-        taskToEdit.setDeveloper(developer);
-        taskToEdit.setStatus(status);
-        return taskToEdit;
+        assertThat(this.setUp.countTasks() == 1);
     }
 }

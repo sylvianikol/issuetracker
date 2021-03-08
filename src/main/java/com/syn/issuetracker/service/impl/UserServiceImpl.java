@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
         }
 
         UserEntity user = this.modelMapper.map(signUpRequest, UserEntity.class);
-        user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+        user.setPassword(this.passwordEncoder.encode(signUpRequest.getPassword()));
         user.setAuthorities(List.of(this.userRoleRepository.findByRole(UserRole.ROLE_USER)));
 
         this.userRepository.save(user);
