@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.syn.issuetracker.common.ExceptionErrorMessages.VALIDATION_FAILURE;
+import static com.syn.issuetracker.common.MiscConstants.TOTAL_ITEMS;
 
 @CrossOrigin("http://localhost:4200")
 @RestController
@@ -47,12 +48,12 @@ public class UserController {
                                                      @PageableDefault(sort = {"username"},
                                                              direction = Sort.Direction.ASC) Pageable pageable) {
 
-        Map<String, Object> users = this.userService
+        Map<String, Object> response = this.userService
                 .getAll(new UserSpecification(username), pageable);
 
-        return users.isEmpty()
+        return (long) response.get(TOTAL_ITEMS) == 0L
                 ? ResponseEntity.notFound().build()
-                : ResponseEntity.ok().body(users);
+                : ResponseEntity.ok().body(response);
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")

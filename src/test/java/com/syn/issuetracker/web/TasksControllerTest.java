@@ -1,5 +1,6 @@
 package com.syn.issuetracker.web;
 
+import com.syn.issuetracker.common.ValidationErrorMessages;
 import com.syn.issuetracker.model.binding.TaskAddBindingModel;
 import com.syn.issuetracker.model.binding.TaskEditBindingModel;
 import com.syn.issuetracker.model.entity.Task;
@@ -22,9 +23,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.List;
 
 import static com.syn.issuetracker.common.ExceptionErrorMessages.*;
+import static com.syn.issuetracker.common.ValidationErrorMessages.TITLE_BLANK;
+import static com.syn.issuetracker.common.ValidationErrorMessages.TITLE_LENGTH;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -79,13 +81,24 @@ class TasksControllerTest extends JsonMapper {
 
     @WithMockUser(username="admin")
     @Test
-    void test_getAll_isOK() throws Exception {
+    void test_getAll_isOk_getsAllWhenAdmin() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders
                 .get("/tasks")
                 .param("userId", ADMIN_ID))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.tasks", hasSize(2)));
+    }
+
+    @WithMockUser(username="user")
+    @Test
+    void test_getAll_isOk_getsUserTasksWhenUser() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders
+                .get("/tasks")
+                .param("userId", USER_ID))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.tasks", hasSize(1)));
     }
 
     @WithMockUser(username="admin")
@@ -131,7 +144,8 @@ class TasksControllerTest extends JsonMapper {
     @Test
     void test_add_isOk() throws Exception {
 
-        TaskAddBindingModel taskToAdd = this.setUp.createTaskToAdd("New Task", "New Desc", ADMIN_ID);
+        TaskAddBindingModel taskToAdd = this.setUp
+                .createTaskToAdd("New Task", "New Desc", ADMIN_ID);
 
         String inputJson = super.mapToJson(taskToAdd);
 
@@ -203,8 +217,9 @@ class TasksControllerTest extends JsonMapper {
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.description", is(VALIDATION_FAILURE)))
-                .andExpect(jsonPath("$.error.[0]", containsString("Title")))
-                .andExpect(jsonPath("$.error.[1]", containsString("Title")));
+                .andExpect(jsonPath("$.error", hasSize(2)))
+                .andExpect(jsonPath("$.error", hasItem(TITLE_BLANK)))
+                .andExpect(jsonPath("$.error", hasItem(TITLE_LENGTH)));
     }
 
     @WithMockUser(username="admin")
@@ -221,7 +236,7 @@ class TasksControllerTest extends JsonMapper {
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message", is(NOT_FOUND)))
-                .andExpect(jsonPath("$.error.[0]", is(TASK_NOT_FOUND)));
+                .andExpect(jsonPath("$.error", hasItem(TASK_NOT_FOUND)));
     }
 
     @WithMockUser(username="admin")
@@ -256,7 +271,9 @@ class TasksControllerTest extends JsonMapper {
 
         this.mockMvc.perform(delete("/tasks/{taskId}", "999"))
                 .andDo(print())
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message", is(NOT_FOUND)))
+                .andExpect(jsonPath("$.error", hasItem(TASK_NOT_FOUND)));
     }
 
     @WithMockUser(username="admin")

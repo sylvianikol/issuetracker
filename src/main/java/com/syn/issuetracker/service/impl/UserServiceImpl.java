@@ -145,7 +145,7 @@ public class UserServiceImpl implements UserService {
     public void delete(String userId) {
 
         UserEntity user = this.userRepository.findById(userId)
-                .orElseThrow(() -> { throw new CustomEntityNotFoundException(USER_NOT_FOUND); });
+                .orElseThrow(() -> { throw new CustomEntityNotFoundException(NOT_FOUND, List.of(USER_NOT_FOUND)); });
 
         this.taskService.unAssignTasks(user.getId());
 

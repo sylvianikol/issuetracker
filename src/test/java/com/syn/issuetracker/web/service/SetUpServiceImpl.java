@@ -2,6 +2,8 @@ package com.syn.issuetracker.web.service;
 
 import com.syn.issuetracker.model.binding.TaskAddBindingModel;
 import com.syn.issuetracker.model.binding.TaskEditBindingModel;
+import com.syn.issuetracker.model.binding.UserEditBindingModel;
+import com.syn.issuetracker.model.binding.UserRoleEntityBindingModel;
 import com.syn.issuetracker.model.entity.Task;
 import com.syn.issuetracker.model.entity.UserEntity;
 import com.syn.issuetracker.model.entity.UserRoleEntity;
@@ -103,8 +105,29 @@ public class SetUpServiceImpl implements SetUpService {
     }
 
     @Override
+    public UserRoleEntityBindingModel createRoleToEdit(UserRole role) {
+        UserRoleEntityBindingModel userRole = new UserRoleEntityBindingModel();
+        userRole.setRole(role);
+        return userRole;
+    }
+
+    @Override
+    public UserEditBindingModel createUserToEdit(String username, String email, List<UserRoleEntityBindingModel> authorities) {
+        UserEditBindingModel userToEdit = new UserEditBindingModel();
+        userToEdit.setUsername(username);
+        userToEdit.setEmail(email);
+        userToEdit.setAuthorities(authorities);
+        return userToEdit;
+    }
+
+    @Override
     public void deleteAllTasks() {
         this.taskRepository.deleteAll();
+    }
+
+    @Override
+    public void deleteAllUsers() {
+        this.userRepository.deleteAll();
     }
 
     @Override

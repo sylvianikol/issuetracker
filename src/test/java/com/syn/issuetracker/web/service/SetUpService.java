@@ -2,6 +2,8 @@ package com.syn.issuetracker.web.service;
 
 import com.syn.issuetracker.model.binding.TaskAddBindingModel;
 import com.syn.issuetracker.model.binding.TaskEditBindingModel;
+import com.syn.issuetracker.model.binding.UserEditBindingModel;
+import com.syn.issuetracker.model.binding.UserRoleEntityBindingModel;
 import com.syn.issuetracker.model.entity.Task;
 import com.syn.issuetracker.model.entity.UserEntity;
 import com.syn.issuetracker.model.entity.UserRoleEntity;
@@ -29,7 +31,13 @@ public interface SetUpService {
 
     TaskEditBindingModel createTaskToEdit(String title, String desc, int priority, String developer, int status);
 
+    UserRoleEntityBindingModel createRoleToEdit(UserRole role);
+
+    UserEditBindingModel createUserToEdit(String username, String email, List<UserRoleEntityBindingModel> authorities);
+
     void deleteAllTasks();
+
+    void deleteAllUsers();
 
     boolean tasksEmpty();
 
