@@ -20,22 +20,30 @@ SynTask is an issue tracking system for managing bugs and planning tasks during 
 
 ## REST API
 
-### Authentication and Authorization 
-- POST user sign in: /signin
-- POST user sign up: /sign-up
+### Auth
+| Methods   | Urls        | Actions       |
+| --------- | ----------- | ------------- |
+| POST      | /signin     | user sign in  | 
+| POST      | /sign-up    | user sign up  |
 
 ### Defaults
-- GET all default page size: page=0&size=10
-- GET all tasks default sort: @PageableDefault(sort = {"status", "priority","createdOn"}
-- GET all users default sort: @PageableDefault(sort = {"username"}
+| Methods   | Urls                                                       | Actions                         |
+| --------- | ---------------------------------------------------------- | ------------------------------- |
+| GET       | page=0&size=10                                             | retrieve all default page size  |
+| GET       | @PageableDefault(sort = {"status", "priority","createdOn"} | retrieve all tasks default sort |
+| GET       | @PageableDefault(sort = {"username"}                       | retrieve all users default sort |
 
 ### Tasks 
-- GET all tasks: /tasks 
-- DELETE all tasks: /tasks
-- GET all tasks by userId: /tasks?userId={userId}
-- DELETE all tasks by userId: /tasks?userId={userId} 
-- GET all tasks by title containing: /tasks?title={keyword}
-- GET all tasks with page and sort: /tasks?page=0&sort={status}
+| Methods     | Urls                          | Actions                                     |
+| ----------- | ------------------------------| ------------------------------------------- |
+| GET         | /tasks                        | retrieve all tasks                          | 
+| DELETE      | /tasks                        | delete all tasks                            |
+| GET         | /tasks?userId={userId}        | retrieve all tasks by userId                |
+| DELETE      | /tasks?userId={userId}        | delete all tasks by userId                  |
+| GET         | /tasks?title={keyword}        | retrieve all tasks by title containing      |
+| GET         | /tasks?page=0&sort={status}   | all tasks with page and sort                |
+
+
 - GET all tasks by userId with params: /tasks?userId={userId}&title={title}?page=0&sort={status}
 - POST a new task: /tasks/add
 - GET a task: /tasks/{taskId}
@@ -56,9 +64,10 @@ SynTask is an issue tracking system for managing bugs and planning tasks during 
 ## Setup
 
 * Java 11
+* Apache Maven
 * Java Mail
 * Spring Security
-* Spring Web
+* Spring Boot Web
 * Spring Data JPA (Hibernate)
 * Hibernate Validator
 * Spring Boot Validation

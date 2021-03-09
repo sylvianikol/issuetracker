@@ -1,4 +1,4 @@
-package com.syn.issuetracker.utils;
+package com.syn.issuetracker.utils.validation;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;

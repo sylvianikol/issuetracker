@@ -1,7 +1,7 @@
 package com.syn.issuetracker.config;
 
-import com.syn.issuetracker.utils.ValidationUtil;
-import com.syn.issuetracker.utils.ValidationUtilImpl;
+import com.syn.issuetracker.utils.validation.ValidationUtil;
+import com.syn.issuetracker.utils.validation.ValidationUtilImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

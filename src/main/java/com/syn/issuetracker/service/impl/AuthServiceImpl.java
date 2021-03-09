@@ -8,7 +8,7 @@ import com.syn.issuetracker.model.payload.response.JwtResponse;
 import com.syn.issuetracker.security.UserDetailsImpl;
 import com.syn.issuetracker.service.AuthService;
 import com.syn.issuetracker.service.UserService;
-import com.syn.issuetracker.utils.ValidationUtil;
+import com.syn.issuetracker.utils.validation.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -70,6 +70,7 @@ public class AuthServiceImpl implements AuthService {
         if (authentication == null) {
             throw new UnprocessableEntityException(VALIDATION_FAILURE, List.of(AUTH_INVALID));
         }
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 

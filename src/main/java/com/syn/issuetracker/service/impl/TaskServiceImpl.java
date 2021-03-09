@@ -1,13 +1,11 @@
 package com.syn.issuetracker.service.impl;
 
 import com.syn.issuetracker.model.entity.Notification;
-import com.syn.issuetracker.model.enums.NotificationType;
 import com.syn.issuetracker.model.enums.Priority;
 import com.syn.issuetracker.model.enums.Status;
 import com.syn.issuetracker.exception.CustomEntityNotFoundException;
 import com.syn.issuetracker.exception.DataConflictException;
 import com.syn.issuetracker.exception.UnprocessableEntityException;
-import com.syn.issuetracker.notification.NotificationExecutorFactory;
 import com.syn.issuetracker.service.NotificationService;
 import com.syn.issuetracker.specification.TaskSpecification;
 import com.syn.issuetracker.model.binding.TaskAddBindingModel;
@@ -18,7 +16,7 @@ import com.syn.issuetracker.model.service.TaskServiceModel;
 import com.syn.issuetracker.repository.TaskRepository;
 import com.syn.issuetracker.service.UserService;
 import com.syn.issuetracker.service.TaskService;
-import com.syn.issuetracker.utils.ValidationUtil;
+import com.syn.issuetracker.utils.validation.ValidationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -33,7 +31,6 @@ import java.util.*;
 
 import static com.syn.issuetracker.common.ExceptionErrorMessages.*;
 import static com.syn.issuetracker.common.MiscConstants.*;
-import static com.syn.issuetracker.common.NotificationTemplates.NEW_TASK_INAPP_SUBJECT;
 
 @Service
 public class TaskServiceImpl implements TaskService {

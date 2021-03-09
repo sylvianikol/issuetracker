@@ -16,7 +16,7 @@ import com.syn.issuetracker.repository.UserRoleRepository;
 import com.syn.issuetracker.service.TaskService;
 import com.syn.issuetracker.service.UserService;
 import com.syn.issuetracker.specification.UserSpecification;
-import com.syn.issuetracker.utils.ValidationUtil;
+import com.syn.issuetracker.utils.validation.ValidationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
