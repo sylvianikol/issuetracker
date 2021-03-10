@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public class BindingResultErrorExtractor implements ErrorExtractor<BindingResult, String> {
 
-    public List<String> extract(BindingResult bindingResult) {
+    public List<String> getViolations(BindingResult bindingResult) {
         return bindingResult.getAllErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());

@@ -1,6 +1,5 @@
 package com.syn.issuetracker.service.impl;
 
-import com.syn.issuetracker.common.NotificationTemplates;
 import com.syn.issuetracker.model.entity.Notification;
 import com.syn.issuetracker.model.entity.Task;
 import com.syn.issuetracker.model.entity.UserEntity;

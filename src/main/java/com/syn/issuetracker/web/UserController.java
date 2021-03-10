@@ -78,7 +78,7 @@ public class UserController {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
                     .body(new ErrorResponse(422, VALIDATION_FAILURE,
-                            this.errorExtractor.extract(bindingResult)));
+                            this.errorExtractor.getViolations(bindingResult)));
         }
 
         this.userService.edit(userEditBindingModel, userId);

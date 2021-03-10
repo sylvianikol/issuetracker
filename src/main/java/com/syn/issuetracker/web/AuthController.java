@@ -36,7 +36,7 @@ public class AuthController {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
                     .body(new ErrorResponse(422, VALIDATION_FAILURE,
-                            this.errorExtractor.extract(bindingResult)));
+                            this.errorExtractor.getViolations(bindingResult)));
         }
 
         JwtResponse jwtResponse = this.authService.register(signUpRequest);
@@ -51,7 +51,7 @@ public class AuthController {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.unprocessableEntity()
                     .body(new ErrorResponse(422, VALIDATION_FAILURE,
-                            this.errorExtractor.extract(bindingResult)));
+                            this.errorExtractor.getViolations(bindingResult)));
         }
 
         JwtResponse jwtResponse = this.authService.login(loginRequest);
